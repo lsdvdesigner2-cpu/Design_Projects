@@ -224,15 +224,15 @@ const DEFAULT_ITEMS = [
   {id:18,cat:'電商',sub:'EDM電報',name:'Linksys — 切板+html+css+js',freq:'定期',notes:''},
   {id:19,cat:'電商',sub:'蝦皮EDM',name:'Benq — 切板純圖片',freq:'定期',notes:''},
   {id:20,cat:'電商',sub:'蝦皮EDM',name:'EPSON — 切板純圖片',freq:'定期',notes:''},
-  {id:21,cat:'內部',sub:'Kinto',name:'POP每月',freq:'定期',notes:'每月例行'},
-  {id:22,cat:'內部',sub:'Kinto',name:'白貨商品圖',freq:'不定期',notes:''},
-  {id:23,cat:'內部',sub:'Kinto',name:'快閃店背板',freq:'不定期',notes:''},
-  {id:24,cat:'內部',sub:'業務',name:'中秋賀卡',freq:'定期',notes:'每年'},
-  {id:25,cat:'內部',sub:'業務',name:'官網更新資訊',freq:'不定期',notes:''},
-  {id:26,cat:'內部',sub:'零件',name:'官網更新資訊',freq:'不定期',notes:''},
-  {id:27,cat:'內部',sub:'管理',name:'季刊',freq:'定期',notes:'每季'},
-  {id:28,cat:'內部',sub:'物流',name:'KPI背板',freq:'定期',notes:'每年'},
-  {id:29,cat:'內部',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'不定期',notes:'每年節慶'},
+  {id:21,cat:'其他部門',sub:'KINYO',name:'POP每月',freq:'定期',notes:'每月例行'},
+  {id:22,cat:'其他部門',sub:'KINYO',name:'白貨商品圖',freq:'不定期',notes:''},
+  {id:23,cat:'其他部門',sub:'KINYO',name:'快閃店背板',freq:'不定期',notes:''},
+  {id:24,cat:'其他部門',sub:'業務',name:'中秋賀卡',freq:'定期',notes:'每年'},
+  {id:25,cat:'其他部門',sub:'業務',name:'官網更新資訊',freq:'不定期',notes:''},
+  {id:26,cat:'其他部門',sub:'零件',name:'官網更新資訊',freq:'不定期',notes:''},
+  {id:27,cat:'其他部門',sub:'管理',name:'季刊',freq:'定期',notes:'每季'},
+  {id:28,cat:'其他部門',sub:'物流',name:'KPI背板',freq:'定期',notes:'每年'},
+  {id:29,cat:'其他部門',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'不定期',notes:'每年節慶'},
 ];
 
 let items = [];
@@ -310,7 +310,7 @@ function doLogout() {
 
 /* ── Filters ── */
 function buildFilters() {
-  document.getElementById('cat-filters').innerHTML = ['全部','大型專案','電商','內部'].map(c =>
+  document.getElementById('cat-filters').innerHTML = ['全部','大型專案','電商','其他部門'].map(c =>
     `<button class="fbtn${c===activeCat?' on':''}" onclick="setCat('${c}',this)">${c}</button>`
   ).join('');
 }
@@ -336,7 +336,7 @@ function render() {
   }
 
   let html = '';
-  ['大型專案','電商','內部'].forEach(cat => {
+  ['大型專案','電商','其他部門'].forEach(cat => {
     const catItems = filtered.filter(d => d.cat === cat);
     if (!catItems.length) return;
     [...new Set(catItems.map(d => d.sub))].forEach(sub => {
