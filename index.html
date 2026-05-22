@@ -223,24 +223,41 @@ let activeCat = '全部';
 let currentUser = null;
 
 // ── API ──
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jsonp' + Date.now() + Math.floor(Math.random()*9999);
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('JSONP timeout'));
+    }, 15000);
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[cb] = function(data) {
+      cleanup();
+      resolve(data);
+    };
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('JSONP script load error — 請確認 Apps Script 已部署且 callback 參數有支援'));
+    };
+    const sep = url.includes('?') ? '&' : '?';
+    script.src = url + sep + 'callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+
 async function apiGet() {
-  console.log('apiGet 開始, URL:', API_URL);
-  const url = API_URL + '?action=getItems';
-  const res = await fetch(url, { redirect: 'follow' });
-  console.log('apiGet 回應狀態:', res.status);
-  const text = await res.text();
-  console.log('apiGet 回應內容:', text.slice(0, 200));
-  const data = JSON.parse(text);
+  const data = await jsonp(API_URL + '?action=getItems');
   return data.items || [];
 }
 
 async function apiPost(body) {
   const url = API_URL + '?action=' + body.action + '&payload=' + encodeURIComponent(JSON.stringify(body));
-  console.log('apiPost URL:', url);
-  const res = await fetch(url, { redirect: 'follow' });
-  const text = await res.text();
-  console.log('apiPost 回應:', text.slice(0, 200));
-  return JSON.parse(text);
+  return await jsonp(url);
 }
 
 // ── Load ──
