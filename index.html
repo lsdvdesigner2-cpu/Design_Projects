@@ -142,7 +142,7 @@ body.admin-mode.super-mode .acct-wrap { display:block; }
     </div>
     <div class="form-grid">
       <div><label>頻率</label>
-        <select id="f-freq"><option>常態</option><option>非常態</option><option>大型</option></select>
+        <select id="f-freq"><option>定期</option><option>不定期</option><option>大型</option></select>
       </div>
       <div><label>備註（選填）</label>
         <input type="text" id="f-notes" placeholder="例：每月例行">
@@ -204,7 +204,7 @@ const USERS_KEY = 'design-dept-users';
 const SUPER = { username:'lsdv.Design', password:'54708191' };
 
 const DEFAULT_ITEMS = [
-  {id:1,cat:'大型專案',sub:'門市改裝',name:'背板',freq:'非常態',notes:''},
+  {id:1,cat:'大型專案',sub:'門市改裝',name:'背板',freq:'不定期',notes:''},
   {id:2,cat:'大型專案',sub:'發光特賣',name:'EDM、POP、Bn',freq:'大型',notes:''},
   {id:3,cat:'大型專案',sub:'EC週年慶',name:'EDM / Bn / 前端（購物網）',freq:'大型',notes:''},
   {id:4,cat:'大型專案',sub:'EC週年慶',name:'發包延伸物（門市）',freq:'大型',notes:''},
@@ -213,26 +213,26 @@ const DEFAULT_ITEMS = [
   {id:7,cat:'大型專案',sub:'尾牙春酒',name:'主視覺、發包延伸物',freq:'大型',notes:''},
   {id:8,cat:'大型專案',sub:'展望會',name:'A3海報',freq:'大型',notes:''},
   {id:9,cat:'大型專案',sub:'台品折優券',name:'發包補望',freq:'大型',notes:'每年1月'},
-  {id:10,cat:'電商',sub:'Bn',name:'EC購物網',freq:'常態',notes:''},
-  {id:11,cat:'電商',sub:'Bn',name:'品牌化操',freq:'常態',notes:''},
-  {id:12,cat:'電商',sub:'Bn',name:'商城平台',freq:'常態',notes:''},
-  {id:13,cat:'電商',sub:'EDM電報',name:'EC購物網',freq:'常態',notes:''},
-  {id:14,cat:'電商',sub:'EDM電報',name:'Anker — 切板+html+css',freq:'常態',notes:''},
-  {id:15,cat:'電商',sub:'EDM電報',name:'林帝 — 切板+html+css',freq:'常態',notes:''},
-  {id:16,cat:'電商',sub:'EDM電報',name:'宜工 — 切板+html+css',freq:'常態',notes:'每季回饋檔期'},
-  {id:17,cat:'電商',sub:'EDM電報',name:'EPSON官網 — 切板+html+css+js',freq:'常態',notes:'8、12檔期'},
-  {id:18,cat:'電商',sub:'EDM電報',name:'Linksys — 切板+html+css+js',freq:'常態',notes:''},
-  {id:19,cat:'電商',sub:'蝦皮EDM',name:'Benq — 切板純圖片',freq:'常態',notes:''},
-  {id:20,cat:'電商',sub:'蝦皮EDM',name:'EPSON — 切板純圖片',freq:'常態',notes:''},
-  {id:21,cat:'內部',sub:'Kinto',name:'POP每月',freq:'常態',notes:'每月例行'},
-  {id:22,cat:'內部',sub:'Kinto',name:'白貨商品圖',freq:'非常態',notes:''},
-  {id:23,cat:'內部',sub:'Kinto',name:'快閃店背板',freq:'非常態',notes:''},
-  {id:24,cat:'內部',sub:'業務',name:'中秋賀卡',freq:'常態',notes:'每年'},
-  {id:25,cat:'內部',sub:'業務',name:'官網更新資訊',freq:'非常態',notes:''},
-  {id:26,cat:'內部',sub:'零件',name:'官網更新資訊',freq:'非常態',notes:''},
-  {id:27,cat:'內部',sub:'管理',name:'季刊',freq:'常態',notes:'每季'},
-  {id:28,cat:'內部',sub:'物流',name:'KPI背板',freq:'常態',notes:'每年'},
-  {id:29,cat:'內部',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'非常態',notes:'每年節慶'},
+  {id:10,cat:'電商',sub:'Bn',name:'EC購物網',freq:'定期',notes:''},
+  {id:11,cat:'電商',sub:'Bn',name:'品牌化操',freq:'定期',notes:''},
+  {id:12,cat:'電商',sub:'Bn',name:'商城平台',freq:'定期',notes:''},
+  {id:13,cat:'電商',sub:'EDM電報',name:'EC購物網',freq:'定期',notes:''},
+  {id:14,cat:'電商',sub:'EDM電報',name:'Anker — 切板+html+css',freq:'定期',notes:''},
+  {id:15,cat:'電商',sub:'EDM電報',name:'林帝 — 切板+html+css',freq:'定期',notes:''},
+  {id:16,cat:'電商',sub:'EDM電報',name:'宜工 — 切板+html+css',freq:'定期',notes:'每季回饋檔期'},
+  {id:17,cat:'電商',sub:'EDM電報',name:'EPSON官網 — 切板+html+css+js',freq:'定期',notes:'8、12檔期'},
+  {id:18,cat:'電商',sub:'EDM電報',name:'Linksys — 切板+html+css+js',freq:'定期',notes:''},
+  {id:19,cat:'電商',sub:'蝦皮EDM',name:'Benq — 切板純圖片',freq:'定期',notes:''},
+  {id:20,cat:'電商',sub:'蝦皮EDM',name:'EPSON — 切板純圖片',freq:'定期',notes:''},
+  {id:21,cat:'內部',sub:'Kinto',name:'POP每月',freq:'定期',notes:'每月例行'},
+  {id:22,cat:'內部',sub:'Kinto',name:'白貨商品圖',freq:'不定期',notes:''},
+  {id:23,cat:'內部',sub:'Kinto',name:'快閃店背板',freq:'不定期',notes:''},
+  {id:24,cat:'內部',sub:'業務',name:'中秋賀卡',freq:'定期',notes:'每年'},
+  {id:25,cat:'內部',sub:'業務',name:'官網更新資訊',freq:'不定期',notes:''},
+  {id:26,cat:'內部',sub:'零件',name:'官網更新資訊',freq:'不定期',notes:''},
+  {id:27,cat:'內部',sub:'管理',name:'季刊',freq:'定期',notes:'每季'},
+  {id:28,cat:'內部',sub:'物流',name:'KPI背板',freq:'定期',notes:'每年'},
+  {id:29,cat:'內部',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'不定期',notes:'每年節慶'},
 ];
 
 let items = [];
@@ -349,7 +349,7 @@ function render() {
         </div>
         <div class="items">`;
       subItems.forEach(d => {
-        const fc = d.freq==='常態'?'f-常態':d.freq==='非常態'?'f-非常態':'f-大型';
+        const fc = d.freq==='定期'?'f-常態':d.freq==='不定期'?'f-非常態':'f-大型';
         const fl = d.freq==='大型'?'大型活動':d.freq;
         html += `<div class="item-row">
           <span class="item-name">${d.name}${d.notes?` <span class="item-notes">· ${d.notes}</span>`:''}</span>
