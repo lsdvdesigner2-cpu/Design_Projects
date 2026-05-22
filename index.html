@@ -1,1 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>設計部工作項目目錄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#ffffff; --bg-sec:#f5f5f3; --bg-ter:#eeede9;
+  --text:#1a1a1a; --text-sec:#6b6b68; --text-ter:#9b9b97;
+  --border:rgba(0,0,0,0.1); --border-med:rgba(0,0,0,0.18); --border-str:rgba(0,0,0,0.28);
+  --radius-md:8px; --radius-lg:12px;
+  --font:'Noto Sans TC', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#1c1c1a; --bg-sec:#252523; --bg-ter:#2e2e2b; --text:#f0efe9; --text-sec:#9b9b97; --text-ter:#6b6b68; --border:rgba(255,255,255,0.1); --border-med:rgba(255,255,255,0.18); --border-str:rgba(255,255,255,0.28); }
+  .b-大型專案{background:#3C3489!important;color:#CECBF6!important}
+  .b-電商{background:#0C447C!important;color:#B5D4F4!important}
+  .b-內部{background:#085041!important;color:#9FE1CB!important}
+  .f-常態{background:#27500A!important;color:#C0DD97!important}
+  .f-非常態{background:#633806!important;color:#FAC775!important}
+  .f-大型{background:#712B13!important;color:#F5C4B3!important}
+}
+body { font-family:var(--font); background:var(--bg-ter); color:var(--text); min-height:100vh; padding:2rem 1rem; }
+.container { max-width:760px; margin:0 auto; }
 
+/* topbar */
+.topbar { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px; }
+.topbar h1 { font-size:20px; font-weight:500; }
+.topbar p { font-size:13px; color:var(--text-sec); margin-top:2px; }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+
+.btn-back    { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); display:none; }
+.btn-back:hover { background:var(--bg-sec); }
+.btn-admin   { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); }
+.btn-admin:hover { background:var(--bg-sec); }
+.user-pill { display:none; align-items:center; gap:8px; font-size:12px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border-med); border-radius:99px; padding:4px 12px; }
+.logout-btn { font-size:12px; background:none; border:none; color:var(--text-sec); cursor:pointer; font-family:var(--font); padding:0; }
+.logout-btn:hover { color:var(--text); }
+
+/* search & filter */
+.search-row { display:flex; gap:8px; margin-bottom:1rem; }
+.search-row input { flex:1; height:38px; padding:0 12px; font-size:14px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); outline:none; }
+.search-row input:focus { border-color:var(--border-str); }
+.filter-row { display:flex; gap:6px; margin-bottom:1.25rem; flex-wrap:wrap; }
+.fbtn { padding:5px 14px; font-size:12px; border:0.5px solid var(--border); border-radius:99px; background:transparent; color:var(--text-sec); cursor:pointer; font-family:var(--font); }
+.fbtn.on { border-color:var(--border-str); color:var(--text); font-weight:500; }
+.fbtn:hover { border-color:var(--border-med); }
+
+/* directory */
+.section { margin-bottom:1.5rem; }
+.section-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; padding:4px 0; }
+.section-cat { font-size:11px; font-weight:500; padding:2px 9px; border-radius:99px; }
+.b-大型專案{background:#EEEDFE;color:#3C3489} .b-電商{background:#E6F1FB;color:#0C447C} .b-內部{background:#E1F5EE;color:#085041}
+.section-sub { font-size:15px; font-weight:500; }
+.section-count { font-size:12px; color:var(--text-sec); }
+.items { border:0.5px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg); }
+.item-row { display:flex; align-items:center; gap:10px; padding:9px 14px; border-bottom:0.5px solid var(--border); }
+.item-row:last-child { border-bottom:none; }
+.item-row:hover { background:var(--bg-sec); }
+.item-name { flex:1; font-size:13px; color:var(--text-sec); }
+.item-notes { font-size:12px; color:var(--text-ter); }
+.freq-badge { font-size:11px; padding:2px 8px; border-radius:99px; white-space:nowrap; }
+.f-常態{background:#EAF3DE;color:#3B6D11} .f-非常態{background:#FAEEDA;color:#854F0B} .f-大型{background:#FAECE7;color:#993C1D}
+.empty { padding:2.5rem; text-align:center; font-size:14px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border); border-radius:var(--radius-lg); }
+
+/* ── Admin page ── */
+#page-admin { display:none; }
+.admin-section { margin-bottom:2rem; }
+.admin-section-title { font-size:13px; font-weight:500; color:var(--text-sec); padding-bottom:6px; border-bottom:0.5px solid var(--border); margin-bottom:1rem; }
+.admin-form { background:var(--bg-sec); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1rem; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.form-single { margin-bottom:10px; }
+.form-grid label, .form-single label { font-size:12px; color:var(--text-sec); display:block; margin-bottom:4px; }
+input[type="text"], input[type="password"], select { width:100%; height:36px; padding:0 10px; font-size:14px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); outline:none; }
+input:focus, select:focus { border-color:var(--border-str); }
+button { height:34px; padding:0 16px; font-size:13px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); cursor:pointer; }
+button:hover { background:var(--bg-sec); }
+.btn-primary { background:var(--text); color:var(--bg); border-color:var(--text); }
+.btn-primary:hover { opacity:0.85; }
+.form-actions { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:12px; }
+.save-msg { font-size:12px; color:#3B6D11; }
+.err-msg  { font-size:12px; color:#A32D2D; }
+.panel { border:0.5px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg); }
+.panel-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:0.5px solid var(--border); font-size:13px; }
+.panel-row:last-child { border-bottom:none; }
+.panel-row:hover { background:var(--bg-sec); }
+.panel-row-name { flex:1; color:var(--text); }
+.panel-row-meta { font-size:12px; color:var(--text-sec); white-space:nowrap; }
+.act-btn { width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; border:none; background:none; color:var(--text-ter); cursor:pointer; border-radius:var(--radius-md); }
+.act-btn:hover { background:var(--bg-ter); color:var(--text-sec); }
+.act-btn.danger:hover { color:#A32D2D; }
+.badge-admin { font-size:11px; padding:2px 8px; border-radius:99px; background:#EEEDFE; color:#3C3489; }
+.badge-user  { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--bg-sec); color:var(--text-sec); }
+.acct-section { display:none; }
+
+/* login modal */
+.modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); align-items:center; justify-content:center; z-index:200; }
+.modal-backdrop.show { display:flex; }
+.modal-box { background:var(--bg); border:0.5px solid var(--border-med); border-radius:var(--radius-lg); padding:1.75rem; width:300px; }
+.modal-box h3 { font-size:15px; font-weight:500; margin-bottom:1rem; }
+.modal-box label { font-size:12px; color:var(--text-sec); display:block; margin-bottom:4px; margin-top:10px; }
+.modal-err { font-size:12px; color:#A32D2D; margin-top:8px; min-height:16px; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:1rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <div>
+      <h1>設計部工作項目目錄</h1>
+      <p>設計部承接的所有工作類型總覽</p>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill" id="user-pill">
+        <span id="user-label"></span>
+        <span style="color:var(--border-med)">·</span>
+        <button class="logout-btn" onclick="doLogout()">登出</button>
+      </div>
+      <button class="btn-back" id="btn-back" onclick="goPublic()">← 返回目錄</button>
+      <button class="btn-admin" id="btn-admin" onclick="enterAdmin()">後台管理</button>
+    </div>
+  </div>
+
+  <!-- 前台 -->
+  <div id="page-public">
+    <div class="search-row">
+      <input type="text" id="search" placeholder="搜尋項目名稱、部門..." oninput="renderPublic()">
+    </div>
+    <div class="filter-row" id="cat-filters"></div>
+    <div id="pub-list"></div>
+  </div>
+
+  <!-- 後台 -->
+  <div id="page-admin">
+
+    <!-- 項目管理 -->
+    <div class="admin-section">
+      <div class="admin-section-title">工作項目管理</div>
+      <div class="admin-form">
+        <div class="form-grid">
+          <div><label>類別</label>
+            <select id="f-cat"><option>大型專案</option><option>電商</option><option>內部</option></select>
+          </div>
+          <div><label>子類 / 發案部門</label>
+            <input type="text" id="f-sub" placeholder="例：Kinto、業務、Bn">
+          </div>
+        </div>
+        <div class="form-single"><label>項目名稱</label>
+          <input type="text" id="f-name" placeholder="例：POP每月、EPSON官網 EDM">
+        </div>
+        <div class="form-grid">
+          <div><label>頻率</label>
+            <select id="f-freq"><option>常態</option><option>非常態</option><option>大型</option></select>
+          </div>
+          <div><label>備註（選填）</label>
+            <input type="text" id="f-notes" placeholder="例：每月例行、每年1月">
+          </div>
+        </div>
+        <div class="form-actions">
+          <span class="save-msg" id="save-msg"></span>
+          <button id="cancel-btn" style="display:none" onclick="cancelEdit()">取消</button>
+          <button class="btn-primary" id="submit-btn" onclick="submitItem()">新增項目</button>
+        </div>
+      </div>
+      <div class="panel" id="admin-list"></div>
+    </div>
+
+    <!-- 帳號管理（主權限限定）-->
+    <div class="admin-section acct-section" id="acct-section">
+      <div class="admin-section-title">帳號管理</div>
+      <div class="admin-form">
+        <div class="form-grid">
+          <div><label>新帳號</label><input type="text" id="new-username" placeholder="帳號名稱"></div>
+          <div><label>密碼</label><input type="password" id="new-password" placeholder="密碼"></div>
+        </div>
+        <div class="form-actions">
+          <span class="err-msg" id="acct-err"></span>
+          <span class="save-msg" id="acct-msg"></span>
+          <button class="btn-primary" onclick="addAccount()">建立帳號</button>
+        </div>
+      </div>
+      <div class="panel" id="account-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 登入 Modal -->
+<div class="modal-backdrop" id="login-modal">
+  <div class="modal-box">
+    <h3>後台登入</h3>
+    <label>帳號</label>
+    <input type="text" id="m-user" placeholder="帳號" autocomplete="username">
+    <label>密碼</label>
+    <input type="password" id="m-pass" placeholder="密碼" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="modal-err" id="m-err"></div>
+    <div class="modal-actions">
+      <button onclick="closeLoginModal()">取消</button>
+      <button class="btn-primary" onclick="doLogin()">登入</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ITEMS_KEY = 'design-dept-items';
+const USERS_KEY = 'design-dept-users';
+const SUPER = { username:'lsdv.Design', password:'54708191' };
+
+let items = [], editId = null, activeCat = '全部', currentUser = null;
+
+const DEFAULT_ITEMS = [
+  {id:1,cat:'大型專案',sub:'門市改裝',name:'背板',freq:'非常態',notes:''},
+  {id:2,cat:'大型專案',sub:'發光特賣',name:'EDM、POP、Bn',freq:'大型',notes:''},
+  {id:3,cat:'大型專案',sub:'EC週年慶',name:'EDM / Bn / 前端（購物網）',freq:'大型',notes:''},
+  {id:4,cat:'大型專案',sub:'EC週年慶',name:'發包延伸物（門市）',freq:'大型',notes:''},
+  {id:5,cat:'大型專案',sub:'媒體規畫',name:'確認輸出物尺寸、欄位圖、主視覺',freq:'大型',notes:'含 Kinto POP、背板'},
+  {id:6,cat:'大型專案',sub:'清底',name:'確認輸出物、欄位圖、主視覺延伸物',freq:'大型',notes:'Bn、EDM'},
+  {id:7,cat:'大型專案',sub:'尾牙春酒',name:'主視覺、發包延伸物',freq:'大型',notes:''},
+  {id:8,cat:'大型專案',sub:'展望會',name:'A3海報',freq:'大型',notes:''},
+  {id:9,cat:'大型專案',sub:'台品折優券',name:'發包補望',freq:'大型',notes:'每年1月'},
+  {id:10,cat:'電商',sub:'Bn',name:'EC購物網',freq:'常態',notes:''},
+  {id:11,cat:'電商',sub:'Bn',name:'品牌化操',freq:'常態',notes:''},
+  {id:12,cat:'電商',sub:'Bn',name:'商城平台',freq:'常態',notes:''},
+  {id:13,cat:'電商',sub:'EDM電報',name:'EC購物網',freq:'常態',notes:''},
+  {id:14,cat:'電商',sub:'EDM電報',name:'Anker — 切板+html+css',freq:'常態',notes:''},
+  {id:15,cat:'電商',sub:'EDM電報',name:'林帝 — 切板+html+css',freq:'常態',notes:''},
+  {id:16,cat:'電商',sub:'EDM電報',name:'宜工 — 切板+html+css',freq:'常態',notes:'每季回饋檔期'},
+  {id:17,cat:'電商',sub:'EDM電報',name:'EPSON官網 — 切板+html+css+js',freq:'常態',notes:'8、12檔期'},
+  {id:18,cat:'電商',sub:'EDM電報',name:'Linksys — 切板+html+css+js',freq:'常態',notes:''},
+  {id:19,cat:'電商',sub:'蝦皮EDM',name:'Benq — 切板純圖片',freq:'常態',notes:''},
+  {id:20,cat:'電商',sub:'蝦皮EDM',name:'EPSON — 切板純圖片',freq:'常態',notes:''},
+  {id:21,cat:'內部',sub:'Kinto',name:'POP每月',freq:'常態',notes:'每月例行'},
+  {id:22,cat:'內部',sub:'Kinto',name:'白貨商品圖',freq:'非常態',notes:''},
+  {id:23,cat:'內部',sub:'Kinto',name:'快閃店背板',freq:'非常態',notes:''},
+  {id:24,cat:'內部',sub:'業務',name:'中秋賀卡',freq:'常態',notes:'每年'},
+  {id:25,cat:'內部',sub:'業務',name:'官網更新資訊',freq:'非常態',notes:''},
+  {id:26,cat:'內部',sub:'零件',name:'官網更新資訊',freq:'非常態',notes:''},
+  {id:27,cat:'內部',sub:'管理',name:'季刊',freq:'常態',notes:'每季'},
+  {id:28,cat:'內部',sub:'物流',name:'KPI背板',freq:'常態',notes:'每年'},
+  {id:29,cat:'內部',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'非常態',notes:'每年節慶'},
+];
+
+function loadItems() {
+  try {
+    const r = localStorage.getItem(ITEMS_KEY);
+    if (r) {
+      const parsed = JSON.parse(r);
+      items = (parsed && parsed.length > 0) ? parsed : DEFAULT_ITEMS;
+    } else {
+      items = DEFAULT_ITEMS;
+      localStorage.setItem(ITEMS_KEY, JSON.stringify(DEFAULT_ITEMS));
+    }
+  } catch(e) {
+    items = DEFAULT_ITEMS;
+  }
+}
+function saveItems() { try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch(e) {} }
+function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; } }
+function saveUsers(u) { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch(e) {} }
+
+/* ── Navigation ── */
+function enterAdmin() {
+  if (currentUser) { showAdmin(); return; }
+  document.getElementById('m-user').value = '';
+  document.getElementById('m-pass').value = '';
+  document.getElementById('m-err').textContent = '';
+  document.getElementById('login-modal').classList.add('show');
+  setTimeout(() => document.getElementById('m-user').focus(), 50);
+}
+
+function showAdmin() {
+  document.getElementById('page-public').style.display = 'none';
+  document.getElementById('page-admin').style.display = '';
+  document.getElementById('btn-admin').style.display = 'none';
+  document.getElementById('btn-back').style.display = '';
+  renderAdmin();
+  if (currentUser.role === 'super') {
+    document.getElementById('acct-section').style.display = '';
+    renderAccounts();
+  }
+}
+
+function goPublic() {
+  document.getElementById('page-public').style.display = '';
+  document.getElementById('page-admin').style.display = 'none';
+  document.getElementById('btn-admin').style.display = '';
+  document.getElementById('btn-back').style.display = 'none';
+}
+
+function closeLoginModal() {
+  document.getElementById('login-modal').classList.remove('show');
+}
+
+function doLogin() {
+  const u = document.getElementById('m-user').value.trim();
+  const p = document.getElementById('m-pass').value;
+  document.getElementById('m-err').textContent = '';
+  let role = null;
+  if (u === SUPER.username && p === SUPER.password) { role = 'super'; }
+  else { const users = loadUsers(); if (users.find(x => x.username===u && x.password===p)) role = 'user'; }
+  if (!role) { document.getElementById('m-err').textContent = '帳號或密碼錯誤'; return; }
+
+  currentUser = { username:u, role };
+  document.getElementById('login-modal').classList.remove('show');
+  document.getElementById('user-label').textContent = u;
+  document.getElementById('user-pill').style.display = 'flex';
+  showAdmin();
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('user-pill').style.display = 'none';
+  document.getElementById('acct-section').style.display = 'none';
+  goPublic();
+}
+
+/* ── Public ── */
+function buildFilters() {
+  document.getElementById('cat-filters').innerHTML = ['全部','大型專案','電商','內部'].map(c =>
+    `<button class="fbtn${c===activeCat?' on':''}" onclick="setCat('${c}',this)">${c}</button>`
+  ).join('');
+}
+function setCat(c, el) {
+  activeCat = c;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderPublic();
+}
+function renderPublic() {
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  const filtered = items.filter(d => {
+    const mc = activeCat==='全部' || d.cat===activeCat;
+    const mq = !q || d.name.toLowerCase().includes(q) || d.sub.toLowerCase().includes(q) || (d.notes||'').toLowerCase().includes(q);
+    return mc && mq;
+  });
+  if (!filtered.length) { document.getElementById('pub-list').innerHTML = '<div class="empty">沒有符合的項目</div>'; return; }
+  let html = '';
+  ['大型專案','電商','內部'].forEach(cat => {
+    const catItems = filtered.filter(d => d.cat===cat);
+    if (!catItems.length) return;
+    [...new Set(catItems.map(d => d.sub))].forEach(sub => {
+      const subItems = catItems.filter(d => d.sub===sub);
+      html += `<div class="section"><div class="section-header">
+        <span class="section-cat b-${cat}">${cat}</span>
+        <span class="section-sub">${sub}</span>
+        <span class="section-count">${subItems.length} 項</span>
+      </div><div class="items">`;
+      subItems.forEach(d => {
+        const fc = d.freq==='常態'?'f-常態':d.freq==='非常態'?'f-非常態':'f-大型';
+        const fl = d.freq==='大型'?'大型活動':d.freq;
+        html += `<div class="item-row">
+          <span class="item-name">${d.name}${d.notes?` <span class="item-notes">· ${d.notes}</span>`:''}</span>
+          <span class="freq-badge ${fc}">${fl}</span>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+  });
+  document.getElementById('pub-list').innerHTML = html;
+}
+
+/* ── Admin ── */
+function renderAdmin() {
+  if (!items.length) { document.getElementById('admin-list').innerHTML = '<div class="empty">尚無項目</div>'; return; }
+  document.getElementById('admin-list').innerHTML = items.map(d => {
+    const fc = d.freq==='常態'?'f-常態':d.freq==='非常態'?'f-非常態':'f-大型';
+    return `<div class="panel-row">
+      <div class="panel-row-name">${d.name}</div>
+      <div class="panel-row-meta">${d.cat} · ${d.sub}</div>
+      <span class="freq-badge ${fc}" style="font-size:11px">${d.freq}</span>
+      <button class="act-btn" onclick="startEdit(${d.id})" title="編輯">✏️</button>
+      <button class="act-btn danger" onclick="confirmDelete(${d.id})" title="刪除">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+function submitItem() {
+  const name = document.getElementById('f-name').value.trim();
+  const sub  = document.getElementById('f-sub').value.trim();
+  if (!name || !sub) { alert('請填寫項目名稱與子類'); return; }
+  const item = { id:editId||Date.now(), cat:document.getElementById('f-cat').value, sub, name, freq:document.getElementById('f-freq').value, notes:document.getElementById('f-notes').value.trim() };
+  if (editId) { items = items.map(d => d.id===editId ? item : d); editId=null; document.getElementById('submit-btn').textContent='新增項目'; document.getElementById('cancel-btn').style.display='none'; }
+  else { items.push(item); }
+  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value='');
+  saveItems(); renderAdmin(); renderPublic();
+  const msg = document.getElementById('save-msg');
+  msg.textContent='✓ 已儲存'; setTimeout(()=>msg.textContent='',2000);
+}
+
+function startEdit(id) {
+  const d = items.find(x => x.id===id); if (!d) return;
+  editId = id;
+  document.getElementById('f-cat').value   = d.cat;
+  document.getElementById('f-sub').value   = d.sub;
+  document.getElementById('f-name').value  = d.name;
+  document.getElementById('f-freq').value  = d.freq;
+  document.getElementById('f-notes').value = d.notes||'';
+  document.getElementById('submit-btn').textContent = '儲存修改';
+  document.getElementById('cancel-btn').style.display = '';
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('f-name').focus();
+}
+
+function cancelEdit() {
+  editId = null;
+  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('submit-btn').textContent='新增項目';
+  document.getElementById('cancel-btn').style.display='none';
+}
+
+function confirmDelete(id) {
+  const d = items.find(x => x.id===id); if (!d) return;
+  if (!confirm(`確定刪除「${d.name}」？`)) return;
+  items = items.filter(x => x.id!==id);
+  saveItems(); renderAdmin(); renderPublic();
+}
+
+/* ── Accounts ── */
+function addAccount() {
+  const u = document.getElementById('new-username').value.trim();
+  const p = document.getElementById('new-password').value.trim();
+  const errEl = document.getElementById('acct-err');
+  const msgEl = document.getElementById('acct-msg');
+  errEl.textContent=''; msgEl.textContent='';
+  if (!u||!p) { errEl.textContent='請填寫帳號與密碼'; return; }
+  if (u===SUPER.username) { errEl.textContent='此帳號名稱不可使用'; return; }
+  const users = loadUsers();
+  if (users.find(x=>x.username===u)) { errEl.textContent='此帳號已存在'; return; }
+  users.push({username:u,password:p});
+  saveUsers(users);
+  document.getElementById('new-username').value='';
+  document.getElementById('new-password').value='';
+  msgEl.textContent='✓ 帳號已建立'; setTimeout(()=>msgEl.textContent='',2000);
+  renderAccounts();
+}
+function deleteAccount(u) {
+  if (!confirm(`確定刪除帳號「${u}」？`)) return;
+  saveUsers(loadUsers().filter(x=>x.username!==u));
+  renderAccounts();
+}
+function renderAccounts() {
+  const users = loadUsers();
+  document.getElementById('account-list').innerHTML =
+    `<div class="panel-row"><div class="panel-row-name">${SUPER.username}</div><span class="badge-admin">主權限</span></div>` +
+    (users.length
+      ? users.map(u=>`<div class="panel-row"><div class="panel-row-name">${u.username}</div><span class="badge-user">一般</span><button class="act-btn danger" onclick="deleteAccount('${u.username}')" title="刪除">🗑</button></div>`).join('')
+      : '<div class="empty" style="border:none;padding:1rem">尚無其他帳號</div>');
+}
+
+/* ── Init ── */
+loadItems(); buildFilters(); renderPublic();
+</script>
+</body>
+</html>
