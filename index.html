@@ -223,55 +223,45 @@ let activeCat = '全部';
 let currentUser = null;
 
 // ── API ──
-function jsonp(url) {
-  return new Promise((resolve, reject) => {
-    const cb = '_cb' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    const timer = setTimeout(() => {
-      delete window[cb];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      reject(new Error('timeout'));
-    }, 10000);
-    window[cb] = data => {
-      clearTimeout(timer);
-      delete window[cb];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      resolve(data);
-    };
-    script.onerror = () => {
-      clearTimeout(timer);
-      delete window[cb];
-      reject(new Error('script error'));
-    };
-    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
-    document.head.appendChild(script);
-  });
-}
-
 async function apiGet() {
-  const data = await jsonp(API_URL + '?action=getItems');
+  console.log('apiGet 開始, URL:', API_URL);
+  const url = API_URL + '?action=getItems';
+  const res = await fetch(url, { redirect: 'follow' });
+  console.log('apiGet 回應狀態:', res.status);
+  const text = await res.text();
+  console.log('apiGet 回應內容:', text.slice(0, 200));
+  const data = JSON.parse(text);
   return data.items || [];
 }
 
 async function apiPost(body) {
   const url = API_URL + '?action=' + body.action + '&payload=' + encodeURIComponent(JSON.stringify(body));
-  return await jsonp(url);
+  console.log('apiPost URL:', url);
+  const res = await fetch(url, { redirect: 'follow' });
+  const text = await res.text();
+  console.log('apiPost 回應:', text.slice(0, 200));
+  return JSON.parse(text);
 }
 
 // ── Load ──
 async function loadItems() {
+  console.log('loadItems() 開始');
   if (!API_URL) {
+    console.log('API_URL 未設定');
     document.getElementById('config-banner').style.display = '';
     document.getElementById('main-list').innerHTML = '<div class="empty">請先設定 Google Sheets API 網址</div>';
     return;
   }
+  console.log('API_URL:', API_URL);
   try {
     document.getElementById('main-list').innerHTML = '<div class="loading">載入中...</div>';
+    console.log('開始呼叫 apiGet...');
     items = await apiGet();
+    console.log('取得資料:', items.length, '筆');
     render();
   } catch(e) {
     console.error('載入失敗:', e);
-    document.getElementById('main-list').innerHTML = '<div class="empty">載入失敗：' + e.message + '<br><small>請確認 Apps Script 已部署且存取權為「所有人」</small></div>';
+    document.getElementById('main-list').innerHTML = '<div class="empty">載入失敗：' + e.message + '<br><small>' + e.stack + '</small></div>';
   }
 }
 
