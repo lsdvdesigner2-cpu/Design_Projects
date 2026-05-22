@@ -223,17 +223,27 @@ let activeCat = '全部';
 let currentUser = null;
 
 // ── API ──
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now();
+    const script = document.createElement('script');
+    window[cb] = data => { delete window[cb]; document.body.removeChild(script); resolve(data); };
+    script.onerror = reject;
+    script.src = url + '&callback=' + cb;
+    document.body.appendChild(script);
+  });
+}
+
 async function apiGet() {
-  const res = await fetch(`${API_URL}?action=getItems`);
-  const data = await res.json();
+  const data = await jsonp(`${API_URL}?action=getItems`);
   return data.items || [];
 }
+
 async function apiPost(body) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  });
-  return await res.json();
+  // POST via fetch with no-cors then re-fetch to get result
+  const url = API_URL + '?action=' + body.action + '&payload=' + encodeURIComponent(JSON.stringify(body));
+  const data = await jsonp(url);
+  return data;
 }
 
 // ── Load ──
