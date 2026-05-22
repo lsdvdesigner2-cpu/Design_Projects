@@ -26,22 +26,17 @@
 }
 body { font-family:var(--font); background:var(--bg-ter); color:var(--text); min-height:100vh; padding:2rem 1rem; }
 .container { max-width:760px; margin:0 auto; }
-
-/* topbar */
 .topbar { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px; }
 .topbar h1 { font-size:20px; font-weight:500; }
 .topbar p { font-size:13px; color:var(--text-sec); margin-top:2px; }
 .topbar-right { display:flex; align-items:center; gap:8px; }
-
-.btn-back    { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); display:none; }
-.btn-back:hover { background:var(--bg-sec); }
-.btn-admin   { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); }
-.btn-admin:hover { background:var(--bg-sec); }
 .user-pill { display:none; align-items:center; gap:8px; font-size:12px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border-med); border-radius:99px; padding:4px 12px; }
 .logout-btn { font-size:12px; background:none; border:none; color:var(--text-sec); cursor:pointer; font-family:var(--font); padding:0; }
 .logout-btn:hover { color:var(--text); }
-
-/* search & filter */
+.btn-back { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); display:none; }
+.btn-back:hover { background:var(--bg-sec); }
+.btn-admin { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); }
+.btn-admin:hover { background:var(--bg-sec); }
 .search-row { display:flex; gap:8px; margin-bottom:1rem; }
 .search-row input { flex:1; height:38px; padding:0 12px; font-size:14px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); outline:none; }
 .search-row input:focus { border-color:var(--border-str); }
@@ -49,8 +44,6 @@ body { font-family:var(--font); background:var(--bg-ter); color:var(--text); min
 .fbtn { padding:5px 14px; font-size:12px; border:0.5px solid var(--border); border-radius:99px; background:transparent; color:var(--text-sec); cursor:pointer; font-family:var(--font); }
 .fbtn.on { border-color:var(--border-str); color:var(--text); font-weight:500; }
 .fbtn:hover { border-color:var(--border-med); }
-
-/* directory */
 .section { margin-bottom:1.5rem; }
 .section-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; padding:4px 0; }
 .section-cat { font-size:11px; font-weight:500; padding:2px 9px; border-radius:99px; }
@@ -66,8 +59,6 @@ body { font-family:var(--font); background:var(--bg-ter); color:var(--text); min
 .freq-badge { font-size:11px; padding:2px 8px; border-radius:99px; white-space:nowrap; }
 .f-常態{background:#EAF3DE;color:#3B6D11} .f-非常態{background:#FAEEDA;color:#854F0B} .f-大型{background:#FAECE7;color:#993C1D}
 .empty { padding:2.5rem; text-align:center; font-size:14px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border); border-radius:var(--radius-lg); }
-
-/* ── Admin page ── */
 #page-admin { display:none; }
 .admin-section { margin-bottom:2rem; }
 .admin-section-title { font-size:13px; font-weight:500; color:var(--text-sec); padding-bottom:6px; border-bottom:0.5px solid var(--border); margin-bottom:1rem; }
@@ -95,9 +86,7 @@ button:hover { background:var(--bg-sec); }
 .act-btn.danger:hover { color:#A32D2D; }
 .badge-admin { font-size:11px; padding:2px 8px; border-radius:99px; background:#EEEDFE; color:#3C3489; }
 .badge-user  { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--bg-sec); color:var(--text-sec); }
-.acct-section { display:none; }
-
-/* login modal */
+#acct-section { display:none; }
 .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); align-items:center; justify-content:center; z-index:200; }
 .modal-backdrop.show { display:flex; }
 .modal-box { background:var(--bg); border:0.5px solid var(--border-med); border-radius:var(--radius-lg); padding:1.75rem; width:300px; }
@@ -109,7 +98,6 @@ button:hover { background:var(--bg-sec); }
 </head>
 <body>
 <div class="container">
-
   <div class="topbar">
     <div>
       <h1>設計部工作項目目錄</h1>
@@ -137,8 +125,6 @@ button:hover { background:var(--bg-sec); }
 
   <!-- 後台 -->
   <div id="page-admin">
-
-    <!-- 項目管理 -->
     <div class="admin-section">
       <div class="admin-section-title">工作項目管理</div>
       <div class="admin-form">
@@ -151,14 +137,14 @@ button:hover { background:var(--bg-sec); }
           </div>
         </div>
         <div class="form-single"><label>項目名稱</label>
-          <input type="text" id="f-name" placeholder="例：POP每月、EPSON官網 EDM">
+          <input type="text" id="f-name" placeholder="例：POP每月">
         </div>
         <div class="form-grid">
           <div><label>頻率</label>
             <select id="f-freq"><option>常態</option><option>非常態</option><option>大型</option></select>
           </div>
           <div><label>備註（選填）</label>
-            <input type="text" id="f-notes" placeholder="例：每月例行、每年1月">
+            <input type="text" id="f-notes" placeholder="例：每月例行">
           </div>
         </div>
         <div class="form-actions">
@@ -170,8 +156,7 @@ button:hover { background:var(--bg-sec); }
       <div class="panel" id="admin-list"></div>
     </div>
 
-    <!-- 帳號管理（主權限限定）-->
-    <div class="admin-section acct-section" id="acct-section">
+    <div class="admin-section" id="acct-section">
       <div class="admin-section-title">帳號管理</div>
       <div class="admin-form">
         <div class="form-grid">
@@ -186,7 +171,6 @@ button:hover { background:var(--bg-sec); }
       </div>
       <div class="panel" id="account-list"></div>
     </div>
-
   </div>
 </div>
 
@@ -210,8 +194,6 @@ button:hover { background:var(--bg-sec); }
 const ITEMS_KEY = 'design-dept-items';
 const USERS_KEY = 'design-dept-users';
 const SUPER = { username:'lsdv.Design', password:'54708191' };
-
-let items = [], editId = null, activeCat = '全部', currentUser = null;
 
 const DEFAULT_ITEMS = [
   {id:1,cat:'大型專案',sub:'門市改裝',name:'背板',freq:'非常態',notes:''},
@@ -245,23 +227,38 @@ const DEFAULT_ITEMS = [
   {id:29,cat:'內部',sub:'總部佈置',name:'新年、聖誕裝飾',freq:'非常態',notes:'每年節慶'},
 ];
 
+let items = [];
+let editId = null;
+let activeCat = '全部';
+let currentUser = null;
+
 function loadItems() {
   try {
-    const r = localStorage.getItem(ITEMS_KEY);
-    if (r) {
-      const parsed = JSON.parse(r);
-      items = (parsed && parsed.length > 0) ? parsed : DEFAULT_ITEMS;
+    const raw = localStorage.getItem(ITEMS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      items = (Array.isArray(parsed) && parsed.length > 0) ? parsed : DEFAULT_ITEMS;
     } else {
       items = DEFAULT_ITEMS;
       localStorage.setItem(ITEMS_KEY, JSON.stringify(DEFAULT_ITEMS));
     }
   } catch(e) {
     items = DEFAULT_ITEMS;
+    try { localStorage.setItem(ITEMS_KEY, JSON.stringify(DEFAULT_ITEMS)); } catch(e2) {}
   }
 }
-function saveItems() { try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch(e) {} }
-function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; } }
-function saveUsers(u) { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch(e) {} }
+
+function saveItems() {
+  try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch(e) {}
+}
+
+function loadUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveUsers(u) {
+  try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch(e) {}
+}
 
 /* ── Navigation ── */
 function enterAdmin() {
@@ -275,12 +272,13 @@ function enterAdmin() {
 
 function showAdmin() {
   document.getElementById('page-public').style.display = 'none';
-  document.getElementById('page-admin').style.display = '';
+  document.getElementById('page-admin').style.display = 'block';
   document.getElementById('btn-admin').style.display = 'none';
   document.getElementById('btn-back').style.display = '';
+  loadItems();
   renderAdmin();
-  if (currentUser.role === 'super') {
-    document.getElementById('acct-section').style.display = '';
+  if (currentUser && currentUser.role === 'super') {
+    document.getElementById('acct-section').style.display = 'block';
     renderAccounts();
   }
 }
@@ -290,6 +288,7 @@ function goPublic() {
   document.getElementById('page-admin').style.display = 'none';
   document.getElementById('btn-admin').style.display = '';
   document.getElementById('btn-back').style.display = 'none';
+  cancelEdit();
 }
 
 function closeLoginModal() {
@@ -301,11 +300,14 @@ function doLogin() {
   const p = document.getElementById('m-pass').value;
   document.getElementById('m-err').textContent = '';
   let role = null;
-  if (u === SUPER.username && p === SUPER.password) { role = 'super'; }
-  else { const users = loadUsers(); if (users.find(x => x.username===u && x.password===p)) role = 'user'; }
+  if (u === SUPER.username && p === SUPER.password) {
+    role = 'super';
+  } else {
+    const users = loadUsers();
+    if (users.find(x => x.username === u && x.password === p)) role = 'user';
+  }
   if (!role) { document.getElementById('m-err').textContent = '帳號或密碼錯誤'; return; }
-
-  currentUser = { username:u, role };
+  currentUser = { username: u, role };
   document.getElementById('login-modal').classList.remove('show');
   document.getElementById('user-label').textContent = u;
   document.getElementById('user-pill').style.display = 'flex';
@@ -319,32 +321,38 @@ function doLogout() {
   goPublic();
 }
 
-/* ── Public ── */
+/* ── Filters ── */
 function buildFilters() {
   document.getElementById('cat-filters').innerHTML = ['全部','大型專案','電商','內部'].map(c =>
     `<button class="fbtn${c===activeCat?' on':''}" onclick="setCat('${c}',this)">${c}</button>`
   ).join('');
 }
+
 function setCat(c, el) {
   activeCat = c;
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
   renderPublic();
 }
+
+/* ── Public render ── */
 function renderPublic() {
   const q = (document.getElementById('search').value || '').toLowerCase();
   const filtered = items.filter(d => {
-    const mc = activeCat==='全部' || d.cat===activeCat;
+    const mc = activeCat === '全部' || d.cat === activeCat;
     const mq = !q || d.name.toLowerCase().includes(q) || d.sub.toLowerCase().includes(q) || (d.notes||'').toLowerCase().includes(q);
     return mc && mq;
   });
-  if (!filtered.length) { document.getElementById('pub-list').innerHTML = '<div class="empty">沒有符合的項目</div>'; return; }
+  if (!filtered.length) {
+    document.getElementById('pub-list').innerHTML = '<div class="empty">沒有符合的項目</div>';
+    return;
+  }
   let html = '';
   ['大型專案','電商','內部'].forEach(cat => {
-    const catItems = filtered.filter(d => d.cat===cat);
+    const catItems = filtered.filter(d => d.cat === cat);
     if (!catItems.length) return;
     [...new Set(catItems.map(d => d.sub))].forEach(sub => {
-      const subItems = catItems.filter(d => d.sub===sub);
+      const subItems = catItems.filter(d => d.sub === sub);
       html += `<div class="section"><div class="section-header">
         <span class="section-cat b-${cat}">${cat}</span>
         <span class="section-sub">${sub}</span>
@@ -364,10 +372,14 @@ function renderPublic() {
   document.getElementById('pub-list').innerHTML = html;
 }
 
-/* ── Admin ── */
+/* ── Admin render ── */
 function renderAdmin() {
-  if (!items.length) { document.getElementById('admin-list').innerHTML = '<div class="empty">尚無項目</div>'; return; }
-  document.getElementById('admin-list').innerHTML = items.map(d => {
+  const list = document.getElementById('admin-list');
+  if (!items || items.length === 0) {
+    list.innerHTML = '<div class="empty" style="border:none">尚無項目</div>';
+    return;
+  }
+  list.innerHTML = items.map(d => {
     const fc = d.freq==='常態'?'f-常態':d.freq==='非常態'?'f-非常態':'f-大型';
     return `<div class="panel-row">
       <div class="panel-row-name">${d.name}</div>
@@ -383,40 +395,53 @@ function submitItem() {
   const name = document.getElementById('f-name').value.trim();
   const sub  = document.getElementById('f-sub').value.trim();
   if (!name || !sub) { alert('請填寫項目名稱與子類'); return; }
-  const item = { id:editId||Date.now(), cat:document.getElementById('f-cat').value, sub, name, freq:document.getElementById('f-freq').value, notes:document.getElementById('f-notes').value.trim() };
-  if (editId) { items = items.map(d => d.id===editId ? item : d); editId=null; document.getElementById('submit-btn').textContent='新增項目'; document.getElementById('cancel-btn').style.display='none'; }
-  else { items.push(item); }
-  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value='');
+  const item = {
+    id: editId || Date.now(),
+    cat: document.getElementById('f-cat').value,
+    sub, name,
+    freq: document.getElementById('f-freq').value,
+    notes: document.getElementById('f-notes').value.trim()
+  };
+  if (editId) {
+    items = items.map(d => d.id === editId ? item : d);
+    editId = null;
+    document.getElementById('submit-btn').textContent = '新增項目';
+    document.getElementById('cancel-btn').style.display = 'none';
+  } else {
+    items.push(item);
+  }
+  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value = '');
   saveItems(); renderAdmin(); renderPublic();
   const msg = document.getElementById('save-msg');
-  msg.textContent='✓ 已儲存'; setTimeout(()=>msg.textContent='',2000);
+  msg.textContent = '✓ 已儲存';
+  setTimeout(() => msg.textContent = '', 2000);
 }
 
 function startEdit(id) {
-  const d = items.find(x => x.id===id); if (!d) return;
+  const d = items.find(x => x.id === id); if (!d) return;
   editId = id;
   document.getElementById('f-cat').value   = d.cat;
   document.getElementById('f-sub').value   = d.sub;
   document.getElementById('f-name').value  = d.name;
   document.getElementById('f-freq').value  = d.freq;
-  document.getElementById('f-notes').value = d.notes||'';
+  document.getElementById('f-notes').value = d.notes || '';
   document.getElementById('submit-btn').textContent = '儲存修改';
   document.getElementById('cancel-btn').style.display = '';
-  window.scrollTo({ top:0, behavior:'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   document.getElementById('f-name').focus();
 }
 
 function cancelEdit() {
   editId = null;
-  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value='');
-  document.getElementById('submit-btn').textContent='新增項目';
-  document.getElementById('cancel-btn').style.display='none';
+  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('submit-btn').textContent = '新增項目';
+  document.getElementById('cancel-btn').style.display = 'none';
 }
 
 function confirmDelete(id) {
-  const d = items.find(x => x.id===id); if (!d) return;
+  const d = items.find(x => x.id === id); if (!d) return;
   if (!confirm(`確定刪除「${d.name}」？`)) return;
-  items = items.filter(x => x.id!==id);
+  items = items.filter(x => x.id !== id);
   saveItems(); renderAdmin(); renderPublic();
 }
 
@@ -426,34 +451,39 @@ function addAccount() {
   const p = document.getElementById('new-password').value.trim();
   const errEl = document.getElementById('acct-err');
   const msgEl = document.getElementById('acct-msg');
-  errEl.textContent=''; msgEl.textContent='';
-  if (!u||!p) { errEl.textContent='請填寫帳號與密碼'; return; }
-  if (u===SUPER.username) { errEl.textContent='此帳號名稱不可使用'; return; }
+  errEl.textContent = ''; msgEl.textContent = '';
+  if (!u || !p) { errEl.textContent = '請填寫帳號與密碼'; return; }
+  if (u === SUPER.username) { errEl.textContent = '此帳號名稱不可使用'; return; }
   const users = loadUsers();
-  if (users.find(x=>x.username===u)) { errEl.textContent='此帳號已存在'; return; }
-  users.push({username:u,password:p});
+  if (users.find(x => x.username === u)) { errEl.textContent = '此帳號已存在'; return; }
+  users.push({ username: u, password: p });
   saveUsers(users);
-  document.getElementById('new-username').value='';
-  document.getElementById('new-password').value='';
-  msgEl.textContent='✓ 帳號已建立'; setTimeout(()=>msgEl.textContent='',2000);
+  document.getElementById('new-username').value = '';
+  document.getElementById('new-password').value = '';
+  msgEl.textContent = '✓ 帳號已建立';
+  setTimeout(() => msgEl.textContent = '', 2000);
   renderAccounts();
 }
+
 function deleteAccount(u) {
   if (!confirm(`確定刪除帳號「${u}」？`)) return;
-  saveUsers(loadUsers().filter(x=>x.username!==u));
+  saveUsers(loadUsers().filter(x => x.username !== u));
   renderAccounts();
 }
+
 function renderAccounts() {
   const users = loadUsers();
   document.getElementById('account-list').innerHTML =
     `<div class="panel-row"><div class="panel-row-name">${SUPER.username}</div><span class="badge-admin">主權限</span></div>` +
     (users.length
-      ? users.map(u=>`<div class="panel-row"><div class="panel-row-name">${u.username}</div><span class="badge-user">一般</span><button class="act-btn danger" onclick="deleteAccount('${u.username}')" title="刪除">🗑</button></div>`).join('')
-      : '<div class="empty" style="border:none;padding:1rem">尚無其他帳號</div>');
+      ? users.map(u => `<div class="panel-row"><div class="panel-row-name">${u.username}</div><span class="badge-user">一般</span><button class="act-btn danger" onclick="deleteAccount('${u.username}')" title="刪除">🗑</button></div>`).join('')
+      : '<div style="padding:1rem;text-align:center;font-size:13px;color:var(--text-sec)">尚無其他帳號</div>');
 }
 
 /* ── Init ── */
-loadItems(); buildFilters(); renderPublic();
+loadItems();
+buildFilters();
+renderPublic();
 </script>
 </body>
 </html>
