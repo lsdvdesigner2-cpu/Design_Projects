@@ -225,25 +225,37 @@ let currentUser = null;
 // ── API ──
 function jsonp(url) {
   return new Promise((resolve, reject) => {
-    const cb = 'cb_' + Date.now();
+    const cb = '_cb' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
-    window[cb] = data => { delete window[cb]; document.body.removeChild(script); resolve(data); };
-    script.onerror = reject;
-    script.src = url + '&callback=' + cb;
-    document.body.appendChild(script);
+    const timer = setTimeout(() => {
+      delete window[cb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    }, 10000);
+    window[cb] = data => {
+      clearTimeout(timer);
+      delete window[cb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    script.onerror = () => {
+      clearTimeout(timer);
+      delete window[cb];
+      reject(new Error('script error'));
+    };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
+    document.head.appendChild(script);
   });
 }
 
 async function apiGet() {
-  const data = await jsonp(`${API_URL}?action=getItems`);
+  const data = await jsonp(API_URL + '?action=getItems');
   return data.items || [];
 }
 
 async function apiPost(body) {
-  // POST via fetch with no-cors then re-fetch to get result
   const url = API_URL + '?action=' + body.action + '&payload=' + encodeURIComponent(JSON.stringify(body));
-  const data = await jsonp(url);
-  return data;
+  return await jsonp(url);
 }
 
 // ── Load ──
@@ -258,7 +270,8 @@ async function loadItems() {
     items = await apiGet();
     render();
   } catch(e) {
-    document.getElementById('main-list').innerHTML = '<div class="empty">載入失敗，請確認 API 網址是否正確</div>';
+    console.error('載入失敗:', e);
+    document.getElementById('main-list').innerHTML = '<div class="empty">載入失敗：' + e.message + '<br><small>請確認 Apps Script 已部署且存取權為「所有人」</small></div>';
   }
 }
 
