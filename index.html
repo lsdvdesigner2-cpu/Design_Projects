@@ -3,490 +3,897 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>設計部工作項目目錄</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<title>設計部工作看板</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg:#ffffff; --bg-sec:#f5f5f3; --bg-ter:#eeede9;
-  --text:#1a1a1a; --text-sec:#6b6b68; --text-ter:#9b9b97;
-  --border:rgba(0,0,0,0.1); --border-med:rgba(0,0,0,0.18); --border-str:rgba(0,0,0,0.28);
-  --radius-md:8px; --radius-lg:12px;
-  --font:'Noto Sans TC', system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg:#1c1c1a; --bg-sec:#252523; --bg-ter:#2e2e2b; --text:#f0efe9; --text-sec:#9b9b97; --text-ter:#6b6b68; --border:rgba(255,255,255,0.1); --border-med:rgba(255,255,255,0.18); --border-str:rgba(255,255,255,0.28); }
-  .b-大型專案{background:#3C3489!important;color:#CECBF6!important}
-  .b-電商{background:#0C447C!important;color:#B5D4F4!important}
-  .b-其他部門{background:#085041!important;color:#9FE1CB!important}
-  .f-定期{background:#27500A!important;color:#C0DD97!important}
-  .f-不定期{background:#633806!important;color:#FAC775!important}
-  .f-大型{background:#712B13!important;color:#F5C4B3!important}
-}
-body { font-family:var(--font); background:var(--bg-ter); color:var(--text); min-height:100vh; padding:2rem 1rem; }
-.container { max-width:1100px; margin:0 auto; }
-.topbar { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px; }
-.topbar h1 { font-size:20px; font-weight:500; }
-.topbar p { font-size:13px; color:var(--text-sec); margin-top:2px; }
-.topbar-right { display:flex; align-items:center; gap:8px; }
-.user-pill { display:none; align-items:center; gap:8px; font-size:12px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border-med); border-radius:99px; padding:4px 12px; }
-.logout-btn { font-size:12px; background:none; border:none; color:var(--text-sec); cursor:pointer; font-family:var(--font); padding:0; }
-.logout-btn:hover { color:var(--text); }
-.btn-admin { font-size:13px; padding:6px 14px; border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text-sec); cursor:pointer; font-family:var(--font); }
-.btn-admin:hover { background:var(--bg-sec); }
-.search-row { display:flex; gap:8px; margin-bottom:1rem; }
-.search-row input { flex:1; height:38px; padding:0 12px; font-size:14px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); outline:none; }
-.search-row input:focus { border-color:var(--border-str); }
-.filter-row { display:flex; gap:6px; margin-bottom:1.25rem; flex-wrap:wrap; }
-.fbtn { padding:5px 14px; font-size:12px; border:0.5px solid var(--border); border-radius:99px; background:transparent; color:var(--text-sec); cursor:pointer; font-family:var(--font); }
-.fbtn.on { border-color:var(--border-str); color:var(--text); font-weight:500; }
-.fbtn:hover { border-color:var(--border-med); }
+  :root {
+    --sidebar-w: 220px;
+    --c-bg: #f5f6fa;
+    --c-card: #ffffff;
+    --c-border: #e4e6ef;
+    --c-text: #2d3436;
+    --c-muted: #636e72;
+    --radius: 10px;
+    --shadow: 0 2px 10px rgba(0,0,0,.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI','PingFang TC','Microsoft JhengHei',sans-serif;
+    background: var(--c-bg); color: var(--c-text);
+    display: flex; min-height: 100vh;
+  }
 
-/* badges */
-.b-大型專案{background:#EEEDFE;color:#3C3489} .b-電商{background:#E6F1FB;color:#0C447C} .b-其他部門{background:#E1F5EE;color:#085041}
-.freq-badge { font-size:11px; padding:2px 8px; border-radius:99px; white-space:nowrap; }
-.f-定期{background:#EAF3DE;color:#3B6D11} .f-不定期{background:#FAEEDA;color:#854F0B} .f-大型{background:#FAECE7;color:#993C1D}
-.empty { padding:2.5rem; text-align:center; font-size:14px; color:var(--text-sec); background:var(--bg); border:0.5px solid var(--border); border-radius:var(--radius-lg); }
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w); background: #1e2235; color: #c8d0e7;
+    display: flex; flex-direction: column;
+    position: fixed; top:0; left:0; bottom:0; z-index:100;
+    transition: transform .3s ease;
+  }
+  #sidebar-header { padding: 22px 18px 16px; border-bottom:1px solid rgba(255,255,255,.08); }
+  #sidebar-header .logo { font-size:15px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px; }
+  #sidebar-header .logo span { font-size:20px; }
+  #sidebar-header .sub { font-size:11px; color:#8895a7; margin-top:4px; }
+  nav { flex:1; padding:12px 0; overflow-y:auto; }
+  .nav-section-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:#5a6378; padding:10px 18px 4px; font-weight:600; }
+  .nav-item {
+    display:flex; align-items:center; gap:10px;
+    padding:9px 18px; cursor:pointer;
+    border-left:3px solid transparent;
+    transition:all .2s; font-size:13.5px; color:#a0aec0; user-select:none;
+  }
+  .nav-item:hover { background:rgba(255,255,255,.06); color:#fff; }
+  .nav-item.active { color:#fff; border-left-color:var(--accent); background:rgba(255,255,255,.08); }
+  .nav-item .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
 
-/* 3-col grid */
-.col-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; align-items:start; }
-@media(max-width:700px){ .col-grid { grid-template-columns:1fr; } }
-.col-card { background:var(--bg); border:0.5px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
-.col-header { padding:12px 14px 10px; border-bottom:0.5px solid var(--border); }
-.col-cat-badge { font-size:11px; font-weight:500; padding:2px 9px; border-radius:99px; display:inline-block; margin-bottom:6px; }
-.col-title { font-size:15px; font-weight:500; color:var(--text); }
-.sub-block { border-bottom:0.5px solid var(--border); }
-.sub-block:last-child { border-bottom:none; }
-.sub-label { font-size:11px; font-weight:500; color:var(--text-ter); padding:8px 14px 4px; letter-spacing:.04em; }
-.item-row { display:flex; align-items:center; gap:6px; padding:6px 14px; border-bottom:0.5px solid var(--border); }
-.item-row:last-child { border-bottom:none; }
-.item-row:hover { background:var(--bg-sec); }
-.item-name { flex:1; font-size:12px; color:var(--text-sec); line-height:1.4; }
-.item-notes { font-size:11px; color:var(--text-ter); }
+  /* ── MAIN ── */
+  #main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-height:100vh; }
 
-/* admin buttons */
-.act-btn { width:26px; height:26px; padding:0; display:none; align-items:center; justify-content:center; font-size:13px; border:none; background:none; cursor:pointer; border-radius:var(--radius-md); color:var(--text-ter); }
-.act-btn:hover { background:var(--bg-ter); color:var(--text-sec); }
-.act-btn.danger:hover { color:#A32D2D; }
-body.admin-mode .act-btn { display:flex; }
+  /* ── TOPBAR ── */
+  #topbar {
+    background:#fff; border-bottom:1px solid var(--c-border);
+    padding:12px 24px; display:flex; align-items:center; gap:12px;
+    position:sticky; top:0; z-index:50; box-shadow:var(--shadow);
+  }
+  #menu-btn { display:none; background:none; border:none; cursor:pointer; font-size:20px; color:var(--c-muted); }
+  #topbar-title { font-size:18px; font-weight:700; }
+  #topbar-badge { font-size:12px; padding:3px 10px; border-radius:20px; color:#fff; font-weight:600; }
+  #topbar-count { font-size:13px; color:var(--c-muted); }
+  #topbar-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
 
-/* add form */
-.add-form-wrap { display:none; background:var(--bg-sec); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1.5rem; }
-body.admin-mode .add-form-wrap { display:block; }
-.add-form-title { font-size:13px; font-weight:500; color:var(--text-sec); margin-bottom:1rem; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-.form-single { margin-bottom:10px; }
-.form-grid label, .form-single label { font-size:12px; color:var(--text-sec); display:block; margin-bottom:4px; }
-input[type="text"], input[type="password"], select { width:100%; height:36px; padding:0 10px; font-size:14px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); outline:none; }
-input:focus, select:focus { border-color:var(--border-str); }
-button { height:34px; padding:0 16px; font-size:13px; font-family:var(--font); border:0.5px solid var(--border-med); border-radius:var(--radius-md); background:var(--bg); color:var(--text); cursor:pointer; }
-button:hover { background:var(--bg-sec); }
-.btn-primary { background:var(--text); color:var(--bg); border-color:var(--text); }
-.btn-primary:hover { opacity:0.85; }
-.form-actions { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:12px; }
-.save-msg { font-size:12px; color:#3B6D11; }
-.err-msg { font-size:12px; color:#A32D2D; }
+  /* login status chip */
+  .auth-chip {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600;
+    cursor:pointer; border:none; transition:all .15s;
+  }
+  .auth-chip.guest {
+    background:#f0f2f8; color:var(--c-muted);
+  }
+  .auth-chip.guest:hover { background:#e0e3ef; color:var(--c-text); }
+  .auth-chip.logged-in {
+    background:#e8f5e9; color:#2e7d32;
+  }
+  .btn-logout {
+    background:none; border:1.5px solid #e0e3ef; border-radius:8px;
+    padding:5px 12px; font-size:12px; color:var(--c-muted);
+    cursor:pointer; font-weight:600; transition:all .15s;
+  }
+  .btn-logout:hover { border-color:#e8613a; color:#e8613a; }
 
-/* account section */
-.acct-wrap { display:none; margin-top:2rem; }
-body.admin-mode.super-mode .acct-wrap { display:block; }
-.acct-title { font-size:13px; font-weight:500; color:var(--text-sec); padding-bottom:6px; border-bottom:0.5px solid var(--border); margin-bottom:1rem; }
-.panel { border:0.5px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg); }
-.panel-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:0.5px solid var(--border); font-size:13px; }
-.panel-row:last-child { border-bottom:none; }
-.panel-row:hover { background:var(--bg-sec); }
-.panel-row-name { flex:1; color:var(--text); }
-.badge-admin { font-size:11px; padding:2px 8px; border-radius:99px; background:#EEEDFE; color:#3C3489; }
-.badge-user  { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--bg-sec); color:var(--text-sec); }
+  /* ── CONTENT ── */
+  #content { padding:28px; flex:1; }
+  .section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .section-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .section-title { font-size:22px; font-weight:700; }
+  .section-desc { font-size:13px; color:var(--c-muted); margin-top:2px; }
 
-/* loading */
-.loading { padding:3rem; text-align:center; font-size:14px; color:var(--text-sec); }
+  /* ── CATEGORY BLOCK ── */
+  .category-block { background:var(--c-card); border-radius:var(--radius); border:1px solid var(--c-border); margin-bottom:18px; overflow:hidden; box-shadow:var(--shadow); }
+  .category-head {
+    display:flex; align-items:center; gap:10px;
+    padding:13px 16px; cursor:pointer;
+    border-bottom:1px solid transparent; transition:background .15s; user-select:none;
+  }
+  .category-head:hover { background:#f8f9fc; }
+  .category-head.open { border-bottom-color:var(--c-border); }
+  .cat-color { width:5px; height:28px; border-radius:3px; flex-shrink:0; }
+  .cat-name { font-size:15px; font-weight:700; flex:1; }
+  .cat-count { font-size:12px; background:#f0f2f8; color:var(--c-muted); padding:2px 9px; border-radius:12px; font-weight:600; }
+  .cat-arrow { font-size:12px; color:var(--c-muted); transition:transform .25s; }
+  .category-head.open .cat-arrow { transform:rotate(90deg); }
+  .category-body { display:none; }
+  .category-body.open { display:block; }
+  .cat-head-actions { display:flex; gap:4px; margin-left:4px; }
 
-/* modal */
-.modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); align-items:center; justify-content:center; z-index:200; }
-.modal-backdrop.show { display:flex; }
-.modal-box { background:var(--bg); border:0.5px solid var(--border-med); border-radius:var(--radius-lg); padding:1.75rem; width:300px; }
-.modal-box h3 { font-size:15px; font-weight:500; margin-bottom:1rem; }
-.modal-box label { font-size:12px; color:var(--text-sec); display:block; margin-bottom:4px; margin-top:10px; }
-.modal-err { font-size:12px; color:#A32D2D; margin-top:8px; min-height:16px; }
-.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:1rem; }
+  /* ── PROJECT ITEM ── */
+  .project-item { padding:14px 16px 14px 30px; border-bottom:1px solid #f0f2f8; }
+  .project-item:last-child { border-bottom:none; }
+  .project-item-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .project-name {
+    font-size:14px; font-weight:600; flex:1;
+    display:flex; align-items:center; gap:8px;
+  }
+  .project-name::before {
+    content:''; display:inline-block; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); flex-shrink:0;
+  }
+  .project-note {
+    font-size:13px; color:#5a6378; line-height:1.7;
+    background:#f8f9fc; border-radius:6px; padding:8px 12px;
+    border-left:3px solid var(--accent); white-space:pre-wrap;
+  }
+  .note-label { font-size:11px; font-weight:600; color:var(--c-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
 
-/* config banner */
-.config-banner { background:#FEF3C7; border:0.5px solid #F59E0B; border-radius:var(--radius-md); padding:10px 14px; font-size:13px; color:#92400E; margin-bottom:1rem; display:none; }
-.config-banner a { color:#92400E; font-weight:500; }
+  /* ── ACTION BUTTONS ── */
+  .btn-icon {
+    border:none; border-radius:6px; cursor:pointer;
+    width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:14px; transition:all .15s; flex-shrink:0;
+  }
+  .btn-edit   { background:#eef2ff; color:#3a7bd5; }
+  .btn-edit:hover   { background:#3a7bd5; color:#fff; }
+  .btn-delete { background:#fff1f0; color:#e8613a; }
+  .btn-delete:hover { background:#e8613a; color:#fff; }
+  .btn-add {
+    background:none; border:1.5px dashed var(--c-border);
+    color:var(--c-muted); border-radius:8px; cursor:pointer;
+    padding:8px 14px; font-size:13px; width:100%;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    transition:all .15s;
+  }
+  .btn-add:hover { border-color:var(--accent); color:var(--accent); background:#fafbff; }
+  .btn-add-cat {
+    display:flex; align-items:center; gap:8px;
+    border:1.5px dashed var(--c-border); border-radius:var(--radius);
+    padding:12px 18px; cursor:pointer; color:var(--c-muted); font-size:13.5px;
+    background:var(--c-card); margin-bottom:18px; transition:all .15s;
+    box-shadow:var(--shadow); width:100%;
+  }
+  .btn-add-cat:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* hide when not logged in */
+  .auth-only { display:none; }
+  body.authenticated .auth-only { display:flex; }
+  body.authenticated .auth-only-block { display:block; }
+  .auth-only-block { display:none; }
+
+  /* read-only notice */
+  .readonly-notice {
+    display:flex; align-items:center; gap:8px;
+    background:#fffbea; border:1px solid #f6d860; border-radius:8px;
+    padding:10px 16px; font-size:13px; color:#7a6000; margin-bottom:20px;
+  }
+  body.authenticated .readonly-notice { display:none; }
+
+  /* ── OVERVIEW ── */
+  .overview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:28px; }
+  .ov-card {
+    border-radius:var(--radius); padding:22px; color:#fff;
+    cursor:pointer; transition:transform .15s, box-shadow .15s;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+  }
+  .ov-card:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,.2); }
+  .ov-card .ov-icon { font-size:28px; margin-bottom:10px; }
+  .ov-card .ov-name { font-size:17px; font-weight:700; margin-bottom:4px; }
+  .ov-card .ov-num  { font-size:28px; font-weight:800; }
+  .ov-card .ov-sub  { font-size:12px; opacity:.8; margin-top:2px; }
+
+  /* ── LOGIN MODAL ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(15,20,40,.6); z-index:200;
+    align-items:center; justify-content:center; padding:16px;
+    backdrop-filter:blur(3px);
+  }
+  .modal-overlay.show { display:flex; }
+  .modal {
+    background:#fff; border-radius:16px; padding:32px;
+    width:100%; max-width:420px; box-shadow:0 24px 64px rgba(0,0,0,.25);
+    animation:modalIn .2s ease;
+  }
+  @keyframes modalIn { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:none} }
+
+  /* login modal specific */
+  #login-modal .modal { max-width:380px; text-align:center; }
+  .login-icon { font-size:44px; margin-bottom:12px; }
+  .login-title { font-size:20px; font-weight:800; margin-bottom:4px; }
+  .login-sub { font-size:13px; color:var(--c-muted); margin-bottom:28px; }
+  .login-field { text-align:left; margin-bottom:16px; }
+  .login-field label { font-size:12px; font-weight:600; color:var(--c-muted); text-transform:uppercase; letter-spacing:.4px; display:block; margin-bottom:6px; }
+  .login-field input {
+    width:100%; border:1.5px solid var(--c-border); border-radius:10px;
+    padding:11px 14px; font-size:15px; font-family:inherit;
+    transition:border-color .15s; color:var(--c-text); background:#fff;
+  }
+  .login-field input:focus { outline:none; border-color:#3a7bd5; box-shadow:0 0 0 3px rgba(58,123,213,.12); }
+  .login-error { font-size:13px; color:#e8613a; text-align:center; margin-bottom:12px; min-height:18px; }
+  .btn-login {
+    width:100%; background:linear-gradient(135deg,#3a7bd5,#6fa3ef);
+    color:#fff; border:none; border-radius:10px; padding:13px;
+    font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s;
+    margin-top:4px;
+  }
+  .btn-login:hover { opacity:.9; }
+
+  /* edit modal */
+  #edit-modal .modal { max-width:500px; }
+  .modal-title { font-size:17px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+  .modal label { font-size:12px; font-weight:600; color:var(--c-muted); text-transform:uppercase; letter-spacing:.4px; display:block; margin-bottom:6px; }
+  .modal input, .modal textarea {
+    width:100%; border:1.5px solid var(--c-border); border-radius:8px;
+    padding:10px 12px; font-size:14px; font-family:inherit;
+    transition:border-color .15s; margin-bottom:16px; color:var(--c-text); background:#fff;
+  }
+  .modal input:focus, .modal textarea:focus { outline:none; border-color:var(--focus-color,#3a7bd5); }
+  .modal textarea { min-height:120px; resize:vertical; line-height:1.6; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:4px; }
+  .btn-cancel { background:#f0f2f8; color:var(--c-muted); border:none; border-radius:8px; padding:9px 20px; cursor:pointer; font-size:14px; font-weight:600; }
+  .btn-cancel:hover { background:#e0e3ef; }
+  .btn-primary { color:#fff; border:none; border-radius:8px; padding:9px 22px; cursor:pointer; font-size:14px; font-weight:600; opacity:1; transition:opacity .15s; }
+  .btn-primary:hover { opacity:.88; }
+
+  /* ── CONFIRM ── */
+  #confirm-modal .modal { max-width:380px; }
+  .confirm-title { font-size:16px; font-weight:700; margin-bottom:8px; }
+  .confirm-msg { font-size:13.5px; color:var(--c-muted); margin-bottom:24px; line-height:1.6; }
+  .confirm-actions { display:flex; gap:10px; justify-content:flex-end; }
+  .btn-danger { background:#e8613a; color:#fff; border:none; border-radius:8px; padding:9px 22px; cursor:pointer; font-size:14px; font-weight:600; }
+  .btn-danger:hover { background:#d0552f; }
+
+  /* ── TOAST ── */
+  #toast {
+    position:fixed; bottom:24px; right:24px; z-index:500;
+    background:#2d3436; color:#fff; padding:12px 20px;
+    border-radius:10px; font-size:13.5px; font-weight:500;
+    box-shadow:0 4px 20px rgba(0,0,0,.2);
+    transform:translateY(80px); opacity:0;
+    transition:all .3s ease; pointer-events:none;
+  }
+  #toast.show { transform:none; opacity:1; }
+
+  /* ── OVERLAY ── */
+  #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:90; }
+  #overlay.show { display:block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width:700px) {
+    :root { --sidebar-w:0px; }
+    #sidebar { width:240px; transform:translateX(-100%); }
+    #sidebar.open { transform:translateX(0); }
+    #menu-btn { display:block; }
+    #main { margin-left:0; }
+    #content { padding:14px; }
+    #topbar { padding:10px 14px; }
+    .project-item { padding-left:18px; }
+    .overview-grid { grid-template-columns:1fr 1fr; gap:12px; }
+    .ov-card { padding:16px; }
+    .ov-card .ov-num { font-size:22px; }
+    #topbar-count { display:none; }
+    .auth-chip span.chip-label { display:none; }
+  }
+  @media (max-width:420px) { .overview-grid { grid-template-columns:1fr; } }
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="topbar">
-    <div>
-      <h1>設計部工作項目目錄</h1>
-      <p>設計部承接的所有工作類型總覽</p>
-    </div>
-    <div class="topbar-right">
-      <div class="user-pill" id="user-pill">
-        <span id="user-label"></span>
-        <span style="color:var(--border-med)">·</span>
-        <button class="logout-btn" onclick="doLogout()">登出後台</button>
-      </div>
-      <button class="btn-admin" id="btn-admin" onclick="enterAdmin()">後台管理</button>
-    </div>
-  </div>
 
-  <div class="config-banner" id="config-banner">
-    ⚠️ 尚未設定 Google Sheets 網址，請先完成設定。<a href="#" onclick="showSetup()">查看說明</a>
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo"><span>🎨</span> 設計部看板</div>
+    <div class="sub">Design Department Board</div>
   </div>
+  <nav id="nav"></nav>
+</aside>
+<div id="overlay"></div>
 
-  <!-- 新增/編輯表單 -->
-  <div class="add-form-wrap">
-    <div class="add-form-title" id="form-title">新增項目</div>
-    <div class="form-grid">
-      <div><label>類別</label>
-        <select id="f-cat"><option>大型專案</option><option>電商</option><option>其他部門</option></select>
-      </div>
-      <div><label>子類 / 發案部門</label>
-        <input type="text" id="f-sub" placeholder="例：Kinto、業務、Bn">
-      </div>
+<!-- MAIN -->
+<main id="main">
+  <header id="topbar">
+    <button id="menu-btn" onclick="toggleMenu()">☰</button>
+    <div id="topbar-title">總覽</div>
+    <span id="topbar-badge"></span>
+    <span id="topbar-count"></span>
+    <div id="topbar-right">
+      <!-- shown when NOT logged in -->
+      <button class="auth-chip guest" id="btn-login-open" onclick="openLoginModal()">
+        🔒 <span class="chip-label">管理員登入</span>
+      </button>
+      <!-- shown when logged in -->
+      <span class="auth-chip logged-in" id="chip-loggedin" style="display:none">
+        ✅ <span class="chip-label" id="chip-username"></span>
+      </span>
+      <button class="btn-logout" id="btn-logout" style="display:none" onclick="logout()">登出</button>
     </div>
-    <div class="form-single"><label>項目名稱</label>
-      <input type="text" id="f-name" placeholder="例：POP每月">
-    </div>
-    <div class="form-grid">
-      <div><label>頻率</label>
-        <select id="f-freq"><option>定期</option><option>不定期</option><option>大型</option></select>
-      </div>
-      <div><label>備註（選填）</label>
-        <input type="text" id="f-notes" placeholder="例：每月例行">
-      </div>
-    </div>
-    <div class="form-actions">
-      <span class="save-msg" id="save-msg"></span>
-      <span class="err-msg" id="form-err"></span>
-      <button id="cancel-btn" style="display:none" onclick="cancelEdit()">取消</button>
-      <button class="btn-primary" id="submit-btn" onclick="submitItem()">新增項目</button>
-    </div>
+  </header>
+  <div id="content">
+    <div id="overview-page"></div>
+    <div id="detail-page" style="display:none"></div>
   </div>
+</main>
 
-  <div class="search-row">
-    <input type="text" id="search" placeholder="搜尋項目名稱、部門..." oninput="render()">
-  </div>
-  <div class="filter-row" id="cat-filters"></div>
-  <div id="main-list"><div class="loading">載入中...</div></div>
-
-  <!-- 帳號管理 -->
-  <div class="acct-wrap">
-    <div class="acct-title">帳號管理</div>
-    <div style="background:var(--bg-sec);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem">
-      <div class="form-grid">
-        <div><label>新帳號</label><input type="text" id="new-username" placeholder="帳號名稱"></div>
-        <div><label>密碼</label><input type="password" id="new-password" placeholder="密碼"></div>
-      </div>
-      <div class="form-actions">
-        <span class="err-msg" id="acct-err"></span>
-        <span class="save-msg" id="acct-msg"></span>
-        <button class="btn-primary" onclick="addAccount()">建立帳號</button>
-      </div>
+<!-- ══ LOGIN MODAL ══ -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">管理員登入</div>
+    <div class="login-sub">登入後可新增、修改、刪除工作項目</div>
+    <div class="login-field">
+      <label>帳號</label>
+      <input id="login-user" type="text" placeholder="請輸入帳號" autocomplete="username">
     </div>
-    <div class="panel" id="account-list"></div>
+    <div class="login-field">
+      <label>密碼</label>
+      <input id="login-pass" type="password" placeholder="請輸入密碼" autocomplete="current-password">
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <button class="btn-login" onclick="doLogin()">登入</button>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn-cancel" onclick="closeLoginModal()" style="font-size:13px">取消</button>
+    </div>
   </div>
 </div>
 
-<!-- 登入 Modal -->
-<div class="modal-backdrop" id="login-modal">
-  <div class="modal-box">
-    <h3>後台登入</h3>
-    <label>帳號</label>
-    <input type="text" id="m-user" placeholder="帳號" autocomplete="username">
-    <label>密碼</label>
-    <input type="password" id="m-pass" placeholder="密碼" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="modal-err" id="m-err"></div>
+<!-- ══ EDIT MODAL ══ -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
     <div class="modal-actions">
-      <button onclick="closeModal()">取消</button>
-      <button class="btn-primary" onclick="doLogin()">登入</button>
+      <button class="btn-cancel" onclick="closeEditModal()">取消</button>
+      <button class="btn-primary" id="modal-confirm" onclick="modalConfirm()">儲存</button>
     </div>
   </div>
 </div>
+
+<!-- ══ CONFIRM MODAL ══ -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="confirm-title" id="confirm-title"></div>
+    <div class="confirm-msg"   id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">取消</button>
+      <button class="btn-danger" onclick="confirmOk()">確認刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script>
-// =============================================
-// ★ 設定你的 Google Apps Script 網址
-// =============================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbygIJRCqbz59YR-FzfJUdgGkN3jVZaLsHH95yNINZuyAuZZHvZ_7J18B_fVYyQn9sU3wQ/exec'; // 貼上你的 Apps Script 部署網址
+// ═══════════════════════════════════════════════
+//  AUTH CONFIG  (password stored as SHA-256)
+// ═══════════════════════════════════════════════
+const AUTH = {
+  username: 'lsdv.designer',
+  // SHA-256 of "54708191"
+  passwordHash: '4ddac8b8c093600c62271e63812423039bd4d315c30d8e43a0cc5be8dede8d3f'
+};
+const SESSION_KEY = 'design_board_auth';
 
-const SUPER = { username:'lsdv.Design', password:'54708191' };
-const USERS_KEY = 'design-dept-users';
-
-let items = [];
-let editId = null;
-let activeCat = '全部';
-let currentUser = null;
-
-// ── API ──
-function jsonp(url) {
-  return new Promise((resolve, reject) => {
-    const cb = '_jsonp' + Date.now() + Math.floor(Math.random()*9999);
-    const script = document.createElement('script');
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error('JSONP timeout'));
-    }, 15000);
-    function cleanup() {
-      clearTimeout(timer);
-      delete window[cb];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-    window[cb] = function(data) {
-      cleanup();
-      resolve(data);
-    };
-    script.onerror = function() {
-      cleanup();
-      reject(new Error('JSONP script load error — 請確認 Apps Script 已部署且 callback 參數有支援'));
-    };
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = url + sep + 'callback=' + cb;
-    document.head.appendChild(script);
-  });
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-async function apiGet() {
-  const data = await jsonp(API_URL + '?action=getItems');
-  return data.items || [];
+function isLoggedIn() { return sessionStorage.getItem(SESSION_KEY) === AUTH.username; }
+
+function setAuthUI() {
+  const loggedIn = isLoggedIn();
+  document.body.classList.toggle('authenticated', loggedIn);
+  document.getElementById('btn-login-open').style.display = loggedIn ? 'none' : '';
+  document.getElementById('chip-loggedin').style.display  = loggedIn ? '' : 'none';
+  document.getElementById('btn-logout').style.display     = loggedIn ? '' : 'none';
+  document.getElementById('chip-username').textContent    = AUTH.username;
 }
 
-async function apiPost(body) {
-  const url = API_URL + '?action=' + body.action + '&payload=' + encodeURIComponent(JSON.stringify(body));
-  return await jsonp(url);
-}
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
 
-// ── Load ──
-async function loadItems() {
-  console.log('loadItems() 開始');
-  if (!API_URL) {
-    console.log('API_URL 未設定');
-    document.getElementById('config-banner').style.display = '';
-    document.getElementById('main-list').innerHTML = '<div class="empty">請先設定 Google Sheets API 網址</div>';
-    return;
-  }
-  console.log('API_URL:', API_URL);
-  try {
-    document.getElementById('main-list').innerHTML = '<div class="loading">載入中...</div>';
-    console.log('開始呼叫 apiGet...');
-    items = await apiGet();
-    console.log('取得資料:', items.length, '筆');
-    render();
-  } catch(e) {
-    console.error('載入失敗:', e);
-    document.getElementById('main-list').innerHTML = '<div class="empty">載入失敗：' + e.message + '<br><small>' + e.stack + '</small></div>';
+  if (!user || !pass) { errEl.textContent = '請輸入帳號與密碼'; return; }
+
+  const hash = await sha256(pass);
+  if (user === AUTH.username && hash === AUTH.passwordHash) {
+    sessionStorage.setItem(SESSION_KEY, AUTH.username);
+    closeLoginModal();
+    setAuthUI();
+    if (currentSecId) renderDetail(); else renderOverview();
+    showToast('✅ 登入成功，歡迎 ' + AUTH.username);
+  } else {
+    errEl.textContent = '帳號或密碼錯誤，請再試一次';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
   }
 }
 
-// ── Auth ──
-function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; } }
-function saveUsers(u) { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch(e) {} }
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  setAuthUI();
+  if (currentSecId) renderDetail(); else renderOverview();
+  showToast('已登出');
+}
 
-function enterAdmin() {
-  document.getElementById('m-user').value = '';
-  document.getElementById('m-pass').value = '';
-  document.getElementById('m-err').textContent = '';
+function openLoginModal() {
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
   document.getElementById('login-modal').classList.add('show');
-  setTimeout(() => document.getElementById('m-user').focus(), 50);
+  setTimeout(()=>document.getElementById('login-user').focus(), 80);
 }
-function closeModal() { document.getElementById('login-modal').classList.remove('show'); }
+function closeLoginModal() { document.getElementById('login-modal').classList.remove('show'); }
 
-function doLogin() {
-  const u = document.getElementById('m-user').value.trim();
-  const p = document.getElementById('m-pass').value;
-  document.getElementById('m-err').textContent = '';
-  let role = null;
-  if (u === SUPER.username && p === SUPER.password) { role = 'super'; }
-  else { const users = loadUsers(); if (users.find(x => x.username===u && x.password===p)) role = 'user'; }
-  if (!role) { document.getElementById('m-err').textContent = '帳號或密碼錯誤'; return; }
-  currentUser = { username:u, role };
-  closeModal();
-  document.getElementById('user-label').textContent = u;
-  document.getElementById('user-pill').style.display = 'flex';
-  document.getElementById('btn-admin').style.display = 'none';
-  document.body.classList.add('admin-mode');
-  if (role === 'super') { document.body.classList.add('super-mode'); renderAccounts(); }
-  render();
-}
-
-function doLogout() {
-  currentUser = null;
-  document.getElementById('user-pill').style.display = 'none';
-  document.getElementById('btn-admin').style.display = '';
-  document.body.classList.remove('admin-mode', 'super-mode');
-  cancelEdit();
-  render();
-}
-
-// ── Filters ──
-function buildFilters() {
-  document.getElementById('cat-filters').innerHTML = ['全部','大型專案','電商','其他部門'].map(c =>
-    `<button class="fbtn${c===activeCat?' on':''}" onclick="setCat('${c}',this)">${c}</button>`
-  ).join('');
-}
-function setCat(c, el) {
-  activeCat = c;
-  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  render();
-}
-
-// ── Render ──
-function render() {
-  const q = (document.getElementById('search').value || '').toLowerCase();
-  const CATS = ['大型專案','電商','其他部門'];
-  const filtered = items.filter(d => {
-    const mc = activeCat === '全部' || d.cat === activeCat;
-    const mq = !q || String(d.name).toLowerCase().includes(q) || String(d.sub).toLowerCase().includes(q) || String(d.notes||'').toLowerCase().includes(q);
-    return mc && mq;
-  });
-
-  if (!filtered.length) {
-    document.getElementById('main-list').innerHTML = '<div class="empty">沒有符合的項目</div>';
-    return;
+// ═══════════════════════════════════════════════
+//  DEFAULT DATA
+// ═══════════════════════════════════════════════
+const DEFAULT_DATA = [
+  {
+    id:'ecommerce', label:'電商處', icon:'🛒', color:'#e8613a',
+    bg:'linear-gradient(135deg,#e8613a,#f0a06a)',
+    categories:[
+      { id:'ec-banner', name:'Banner', items:[
+        { id:'i1', name:'購物網 Banner', note:`製作官方購物網站首頁及活動頁 Banner。\n尺寸規格：1920×600px（電腦版）、750×400px（手機版）\n交件格式：JPG / PNG，72dpi\n備註：請確認促銷文案與商品圖由行銷部提供` },
+        { id:'i2', name:'品牌代操 Banner', note:`依各品牌視覺規範製作促銷活動 Banner。\n需依品牌提供之 CI 色彩與字型執行\n交件格式：JPG，尺寸依各平台規定\n備註：代操品牌清單請洽業務確認` },
+        { id:'i3', name:'蝦皮 Banner', note:`蝦皮賣場活動 Banner 製作。\n尺寸：1200×300px（主圖）、800×800px（商品圖）\n交件格式：JPG / PNG\n備註：需配合蝦皮活動檔期提前 3 個工作天完稿` }
+      ]},
+      { id:'ec-edm', name:'EDM', items:[
+        { id:'i4', name:'購物網 EDM', note:`官網會員電子報設計。\n固定版型寬度：600px\n內容區塊：主視覺＋活動商品＋CTA按鈕\n備註：HTML 切版由前端負責，設計交稿為 PSD/AI` },
+        { id:'i5', name:'品牌代操 EDM', note:`各代操品牌之會員電子報設計。\n需符合品牌 CI 規範\n版型寬度：600px\n備註：文案由品牌方提供，設計需確認後再送審` }
+      ]},
+      { id:'ec-shopee-edm', name:'蝦皮 EDM', items:[
+        { id:'i6', name:'蝦皮電子報', note:`蝦皮平台站內信 EDM 設計。\n尺寸：600×任意長度\n重點：需突顯促銷折扣數字，視覺強烈\n備註：配合蝦皮後台上傳規格，圖片需壓縮至 1MB 以內` }
+      ]}
+    ]
+  },
+  {
+    id:'headquarters', label:'總公司', icon:'🏢', color:'#3a7bd5',
+    bg:'linear-gradient(135deg,#3a7bd5,#6fa3ef)',
+    categories:[
+      { id:'hq-kinyo', name:'KINYO', items:[
+        { id:'i7', name:'快閃店', note:`KINYO 品牌快閃店活動視覺設計。\n包含：主視覺海報、指引看板、展架設計\n尺寸：依現場場地規格調整\n備註：需配合快閃活動時間提前 2 週完稿送印` },
+        { id:'i8', name:'POP', note:`門市 POP 廣告物製作。\n常見規格：A4、A3、DL 型\n格式：AI 完稿，含出血 3mm\n備註：各品項POP 需區分促銷款與形象款` },
+        { id:'i9', name:'百貨商品圖', note:`百貨通路使用之商品形象圖。\n輸出格式：JPG，300dpi（印刷用）/ 72dpi（數位用）\n備註：需確認通路方是否有特定版型要求` }
+      ]},
+      { id:'hq-sales', name:'業務部', items:[
+        { id:'i10', name:'前端（業務部）', note:`業務部門所需之對外簡報、提案視覺製作。\n常見需求：PPT 封面改版、商品目錄頁設計\n備註：請提前 5 個工作天提出需求` },
+        { id:'i11', name:'中秋賀卡', note:`每年中秋節客戶電子賀卡設計。\n格式：JPG 或 GIF 動態圖\n尺寸：1080×1080px（方形）\n備註：8月底前完成設計定稿` }
+      ]},
+      { id:'hq-parts', name:'零件部', items:[
+        { id:'i12', name:'前端（零件部）', note:`零件部對外業務所需之設計物。\n常見需求：產品規格表版型、型錄封面\n格式：PDF、JPG\n備註：規格資料由零件部自行提供` }
+      ]},
+      { id:'hq-mgmt', name:'管理部', items:[
+        { id:'i13', name:'季刊', note:`公司內部季刊設計排版（每季一期）。\n頁數：約 16–24 頁\n格式：AI / InDesign 完稿，輸出 PDF\n備註：文稿由各部門提供，設計截稿日為各季末月 15 日` },
+        { id:'i14', name:'其他設計需求', note:`管理部不定期提出之設計需求。\n常見項目：活動邀請函、內部表單版型、識別貼紙\n備註：請以 Email 或設計需求單正式提出` }
+      ]},
+      { id:'hq-logistics', name:'物流部', items:[
+        { id:'i15', name:'KPI 背板', note:`物流部門 KPI 宣傳背板設計。\n尺寸：依現場展示牆規格（常見 180×90cm）\n格式：AI 完稿，含出血 5mm\n備註：數據內容由物流部提供，設計負責排版視覺化` }
+      ]},
+      { id:'hq-office', name:'總公司佈置', items:[
+        { id:'i16', name:'辦公室環境佈置', note:`總公司辦公空間、走廊、會議室等環境設計佈置物。\n常見需求：節慶佈置設計稿、掛畫、品牌牆\n備註：大型輸出請提前 3 週確認廠商報價` }
+      ]}
+    ]
+  },
+  {
+    id:'bigproject', label:'大型專案', icon:'🚀', color:'#6c5ce7',
+    bg:'linear-gradient(135deg,#6c5ce7,#a29bfe)',
+    categories:[
+      { id:'bp-store',   name:'門市改裝',   items:[{ id:'i17', name:'門市改裝視覺',    note:`實體門市改裝期間全套視覺設計。\n包含：外觀招牌、室內指引、陳列看板、背牆\n備註：需配合施工時程，完稿需提前 4 週` }]},
+      { id:'bp-quangg',  name:'群光特賣會', items:[{ id:'i18', name:'群光特賣會',       note:`年度群光廣場特賣活動全套設計。\n包含：主視覺、布條、DM、攤位背板\n備註：規格需與群光場地方確認，通常每年辦理一次` }]},
+      { id:'bp-ec',      name:'EC 週年慶',  items:[{ id:'i19', name:'EC 週年慶',        note:`電商官網年度週年慶活動視覺。\n包含：首頁主視覺、活動頁設計、Banner 全套\n備註：需跨部門協作（行銷、電商、設計），時程約 3 週` }]},
+      { id:'bp-expo',    name:'多媒體/文具展', items:[{ id:'i20', name:'多媒體/文具展', note:`參展攤位整體視覺規劃設計。\n包含：展位背板、展示架、DM、名片\n備註：展場規格請洽主辦單位取得平面圖後再執行` }]},
+      { id:'bp-syntrend',name:'三創展',     items:[{ id:'i21', name:'三創展',           note:`三創生活園區快閃/展覽活動視覺。\n包含：展板、品牌牆、互動看板設計\n備註：需配合三創場地規定材質（禁用噴膠等）` }]},
+      { id:'bp-party',   name:'尾牙/春酒', items:[{ id:'i22', name:'尾牙/春酒',        note:`公司年度尾牙與春酒活動美術設計。\n包含：邀請函、活動節目背板、抽獎道具、桌卡\n備註：12月底前完成尾牙設計；農曆年後 2 週前完成春酒設計` }]},
+      { id:'bp-outlook', name:'展望會',     items:[{ id:'i23', name:'展望會',           note:`年度公司展望發表會整體視覺。\n包含：會議背板、簡報封面、現場道具\n備註：與高層確認主題後方可執行，通常於 Q1 辦理` }]},
+      { id:'bp-tjing',   name:'台晶折價卷', items:[{ id:'i24', name:'台晶折價卷',      note:`台晶通路專屬折價券設計。\n常見規格：DL 型（99×210mm）/ A5\n格式：AI 完稿，含出血 3mm，CMYK 色彩模式\n備註：折扣數字及有效日期由業務提供，設計執行版型` }]}
+    ]
   }
+];
 
-  const activeCats = activeCat === '全部' ? CATS : [activeCat];
-  let html = '<div class="col-grid">';
-  activeCats.forEach(cat => {
-    const catItems = filtered.filter(d => d.cat === cat);
-    if (!catItems.length) return;
-    const subs = [...new Set(catItems.map(d => d.sub))];
-    const catLabel = cat === '大型專案' ? '大型跨部門專案' : cat === '電商' ? '電商設計項目' : '內部各部門需求';
-    html += `<div class="col-card">
-      <div class="col-header">
-        <span class="col-cat-badge b-${cat}">${cat}</span>
-        <div class="col-title">${catLabel}</div>
-      </div>`;
-    subs.forEach(sub => {
-      const subItems = catItems.filter(d => d.sub === sub);
-      html += `<div class="sub-block"><div class="sub-label">${sub}</div>`;
-      subItems.forEach(d => {
-        const fc = d.freq==='定期'?'f-定期':d.freq==='不定期'?'f-不定期':'f-大型';
-        html += `<div class="item-row">
-          <span class="item-name">${d.name}${d.notes?` <span class="item-notes">· ${d.notes}</span>`:''}</span>
-          <span class="freq-badge ${fc}">${d.freq}</span>
-          <button class="act-btn" onclick="startEdit(${d.id})" title="編輯">✏️</button>
-          <button class="act-btn danger" onclick="confirmDelete(${d.id})" title="刪除">🗑</button>
-        </div>`;
+// ═══════════════════════════════════════════════
+//  DATA PERSISTENCE
+// ═══════════════════════════════════════════════
+const STORAGE_KEY = 'design_board_v2';
+let DATA = loadData();
+function loadData() {
+  try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+  catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+}
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+function uid() { return 'id-' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let currentSecId = null;
+
+// ═══════════════════════════════════════════════
+//  AUTH GUARD
+// ═══════════════════════════════════════════════
+function requireAuth(fn) {
+  if (!isLoggedIn()) { openLoginModal(); return; }
+  fn();
+}
+
+// ═══════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════
+function buildNav() {
+  const nav = document.getElementById('nav');
+  let html = `
+    <div class="nav-item active" onclick="showOverview(this)" style="--accent:#8895a7" data-page="overview">
+      <span style="font-size:16px">📊</span> 總覽
+    </div>
+    <div class="nav-section-label">業務區塊</div>
+  `;
+  DATA.forEach(sec => {
+    const total = sec.categories.reduce((s,c)=>s+c.items.length,0);
+    html += `
+      <div class="nav-item" onclick="showSection('${sec.id}',this)" style="--accent:${sec.color}" data-page="${sec.id}">
+        <span class="dot"></span> ${sec.label}
+        <span style="margin-left:auto;font-size:11px;opacity:.6">${total}</span>
+      </div>
+    `;
+  });
+  nav.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+//  OVERVIEW
+// ═══════════════════════════════════════════════
+function showOverview(el) {
+  setActive(el || document.querySelector('[data-page="overview"]'));
+  document.getElementById('overview-page').style.display = '';
+  document.getElementById('detail-page').style.display   = 'none';
+  document.getElementById('topbar-title').textContent = '總覽';
+  document.getElementById('topbar-badge').textContent = '';
+  document.getElementById('topbar-badge').style.cssText = '';
+  document.getElementById('topbar-count').textContent = '';
+  currentSecId = null;
+  renderOverview();
+  closeMenu();
+}
+
+function renderOverview() {
+  const page  = document.getElementById('overview-page');
+  const total = DATA.reduce((s,sec)=>s+sec.categories.reduce((ss,c)=>ss+c.items.length,0),0);
+  let html = `
+    <div class="section-header" style="margin-bottom:24px">
+      <div class="section-icon" style="background:#f0f2f8;font-size:22px">📊</div>
+      <div>
+        <div class="section-title">設計部工作看板</div>
+        <div class="section-desc">共 ${total} 個工作項目・3 大業務方向</div>
+      </div>
+    </div>
+    <div class="overview-grid">
+  `;
+  DATA.forEach(sec=>{
+    const count = sec.categories.reduce((s,c)=>s+c.items.length,0);
+    html += `
+      <div class="ov-card" style="background:${sec.bg}" onclick="showSection('${sec.id}')">
+        <div class="ov-icon">${sec.icon}</div>
+        <div class="ov-name">${sec.label}</div>
+        <div class="ov-num">${count}</div>
+        <div class="ov-sub">${sec.categories.length} 個類別</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  html += `<div class="category-block">
+    <div class="category-head open" style="cursor:default">
+      <div class="cat-color" style="background:#8895a7"></div>
+      <div class="cat-name">所有項目索引</div>
+      <span class="cat-count">${total}</span>
+    </div>
+    <div class="category-body open">`;
+  DATA.forEach(sec=>{
+    sec.categories.forEach(cat=>{
+      cat.items.forEach(item=>{
+        html += `
+          <div class="project-item" style="--accent:${sec.color};display:flex;align-items:center;gap:10px;padding-left:18px">
+            <span style="font-size:15px">${sec.icon}</span>
+            <span style="font-size:13px;flex:1">${sec.label} › <b>${cat.name}</b> › ${esc(item.name)}</span>
+            <span style="font-size:11px;color:${sec.color};font-weight:700;cursor:pointer;flex-shrink:0"
+              onclick="showSection('${sec.id}')">查看 →</span>
+          </div>`;
       });
-      html += `</div>`;
     });
-    html += `</div>`;
   });
-  html += '</div>';
-  document.getElementById('main-list').innerHTML = html;
+  html += `</div></div>`;
+  page.innerHTML = html;
 }
 
-// ── CRUD ──
-async function submitItem() {
-  const name = document.getElementById('f-name').value.trim();
-  const sub  = document.getElementById('f-sub').value.trim();
-  if (!name || !sub) { document.getElementById('form-err').textContent = '請填寫項目名稱與子類'; return; }
-  document.getElementById('form-err').textContent = '';
-  document.getElementById('submit-btn').textContent = '處理中...';
-  document.getElementById('submit-btn').disabled = true;
+// ═══════════════════════════════════════════════
+//  DETAIL
+// ═══════════════════════════════════════════════
+function showSection(secId, el) {
+  currentSecId = secId;
+  setActive(el || document.querySelector(`[data-page="${secId}"]`));
+  document.getElementById('overview-page').style.display = 'none';
+  document.getElementById('detail-page').style.display   = '';
+  renderDetail();
+  window.scrollTo(0,0);
+  closeMenu();
+}
 
-  const item = { cat:document.getElementById('f-cat').value, sub, name, freq:document.getElementById('f-freq').value, notes:document.getElementById('f-notes').value.trim() };
+function renderDetail() {
+  const sec   = DATA.find(s=>s.id===currentSecId);
+  const total = sec.categories.reduce((s,c)=>s+c.items.length,0);
+  const auth  = isLoggedIn();
 
-  try {
-    if (editId) {
-      item.id = editId;
-      await apiPost({ action:'updateItem', item });
-      items = items.map(d => d.id == editId ? {...d,...item} : d);
-      editId = null;
-      document.getElementById('submit-btn').textContent = '新增項目';
-      document.getElementById('form-title').textContent = '新增項目';
-      document.getElementById('cancel-btn').style.display = 'none';
-    } else {
-      const res = await apiPost({ action:'addItem', item });
-      item.id = res.id;
-      items.push(item);
-    }
-    ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value = '');
-    render();
-    const msg = document.getElementById('save-msg');
-    msg.textContent = '✓ 已儲存'; setTimeout(() => msg.textContent='', 2000);
-  } catch(e) {
-    document.getElementById('form-err').textContent = '儲存失敗，請再試一次';
+  document.getElementById('topbar-title').textContent = sec.label;
+  document.getElementById('topbar-badge').textContent = sec.label;
+  document.getElementById('topbar-badge').style.cssText = `background:${sec.color}`;
+  document.getElementById('topbar-count').textContent   = `${total} 個項目`;
+
+  // readonly notice
+  const notice = auth ? '' : `
+    <div class="readonly-notice">
+      🔒 目前為瀏覽模式，<a href="#" onclick="openLoginModal();return false;" style="color:inherit;font-weight:700">管理員登入</a>後可編輯項目
+    </div>`;
+
+  let html = notice + `
+    <div class="section-header">
+      <div class="section-icon" style="background:${sec.color}22">${sec.icon}</div>
+      <div>
+        <div class="section-title" style="color:${sec.color}">${esc(sec.label)}</div>
+        <div class="section-desc">${sec.categories.length} 個類別・${total} 個工作項目</div>
+      </div>
+    </div>
+  `;
+
+  sec.categories.forEach((cat, ci)=>{
+    const bodyId = `body-${ci}`;
+    const headId = `head-${ci}`;
+    const editBtns = auth ? `
+      <div class="cat-head-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon btn-edit"   title="重新命名" onclick="renameCat('${cat.id}')">✏️</button>
+        <button class="btn-icon btn-delete" title="刪除類別" onclick="deleteCat('${cat.id}')">🗑️</button>
+      </div>` : '';
+
+    html += `
+      <div class="category-block" id="cat-block-${cat.id}">
+        <div class="category-head open" id="${headId}" onclick="toggleCat(event,'${headId}','${bodyId}')">
+          <div class="cat-color" style="background:${sec.color}"></div>
+          <div class="cat-name">${esc(cat.name)}</div>
+          <span class="cat-count">${cat.items.length}</span>
+          ${editBtns}
+          <span class="cat-arrow">▶</span>
+        </div>
+        <div class="category-body open" id="${bodyId}">
+    `;
+
+    cat.items.forEach(item=>{
+      const itemBtns = auth ? `
+        <button class="btn-icon btn-edit"   title="編輯"   onclick="editItem('${cat.id}','${item.id}')">✏️</button>
+        <button class="btn-icon btn-delete" title="刪除"   onclick="deleteItem('${cat.id}','${item.id}')">🗑️</button>` : '';
+      html += `
+        <div class="project-item" style="--accent:${sec.color}" id="item-${item.id}">
+          <div class="project-item-header">
+            <div class="project-name">${esc(item.name)}</div>
+            ${itemBtns}
+          </div>
+          <div class="note-label">📝 備註說明</div>
+          <div class="project-note">${esc(item.note)||'<span style="opacity:.4">（尚無備註）</span>'}</div>
+        </div>`;
+    });
+
+    const addItemBtn = auth ? `
+      <div style="padding:10px 12px">
+        <button class="btn-add" onclick="addItem('${cat.id}')">＋ 新增項目</button>
+      </div>` : '';
+    html += addItemBtn + `</div></div>`;
+  });
+
+  const addCatBtn = auth ? `
+    <button class="btn-add-cat" onclick="addCategory()">
+      <span style="font-size:18px;color:${sec.color}">＋</span>
+      <span>新增類別</span>
+    </button>` : '';
+  html += addCatBtn;
+
+  document.getElementById('detail-page').innerHTML = html;
+}
+
+function toggleCat(e, headId, bodyId) {
+  if (e.target.closest('.cat-head-actions')) return;
+  document.getElementById(headId).classList.toggle('open');
+  document.getElementById(bodyId).classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════
+//  CRUD — ITEM
+// ═══════════════════════════════════════════════
+function addItem(catId) {
+  requireAuth(()=>{
+    openEditModal({
+      title:'➕ 新增項目', color:currentColor(),
+      fields:[
+        { label:'項目名稱', id:'fname', type:'input',    placeholder:'例：活動主視覺設計' },
+        { label:'備註說明', id:'fnote', type:'textarea',  placeholder:'請填入工作規格、注意事項…' }
+      ],
+      onConfirm(){
+        const name = val('fname').trim();
+        if(!name){ showToast('請輸入項目名稱'); return false; }
+        const sec = DATA.find(s=>s.id===currentSecId);
+        const cat = sec.categories.find(c=>c.id===catId);
+        cat.items.push({ id:uid(), name, note:val('fnote') });
+        saveAndRefresh('項目已新增 ✓');
+      }
+    });
+  });
+}
+
+function editItem(catId, itemId) {
+  requireAuth(()=>{
+    const sec  = DATA.find(s=>s.id===currentSecId);
+    const cat  = sec.categories.find(c=>c.id===catId);
+    const item = cat.items.find(i=>i.id===itemId);
+    openEditModal({
+      title:'✏️ 編輯項目', color:currentColor(),
+      fields:[
+        { label:'項目名稱', id:'fname', type:'input',   value:item.name },
+        { label:'備註說明', id:'fnote', type:'textarea', value:item.note }
+      ],
+      onConfirm(){
+        const name = val('fname').trim();
+        if(!name){ showToast('請輸入項目名稱'); return false; }
+        item.name = name; item.note = val('fnote');
+        saveAndRefresh('已儲存 ✓');
+      }
+    });
+  });
+}
+
+function deleteItem(catId, itemId) {
+  requireAuth(()=>{
+    const sec  = DATA.find(s=>s.id===currentSecId);
+    const cat  = sec.categories.find(c=>c.id===catId);
+    const item = cat.items.find(i=>i.id===itemId);
+    openConfirm(`刪除「${item.name}」？`, `此操作無法復原，確定要刪除這個項目嗎？`, ()=>{
+      cat.items = cat.items.filter(i=>i.id!==itemId);
+      saveAndRefresh('項目已刪除');
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  CRUD — CATEGORY
+// ═══════════════════════════════════════════════
+function addCategory() {
+  requireAuth(()=>{
+    openEditModal({
+      title:'📁 新增類別', color:currentColor(),
+      fields:[{ label:'類別名稱', id:'fname', type:'input', placeholder:'例：品牌形象' }],
+      onConfirm(){
+        const name = val('fname').trim();
+        if(!name){ showToast('請輸入類別名稱'); return false; }
+        DATA.find(s=>s.id===currentSecId).categories.push({ id:uid(), name, items:[] });
+        saveAndRefresh('類別已新增 ✓');
+      }
+    });
+  });
+}
+
+function renameCat(catId) {
+  requireAuth(()=>{
+    const cat = DATA.find(s=>s.id===currentSecId).categories.find(c=>c.id===catId);
+    openEditModal({
+      title:'✏️ 重新命名類別', color:currentColor(),
+      fields:[{ label:'類別名稱', id:'fname', type:'input', value:cat.name }],
+      onConfirm(){
+        const name = val('fname').trim();
+        if(!name){ showToast('請輸入類別名稱'); return false; }
+        cat.name = name; saveAndRefresh('類別已更新 ✓');
+      }
+    });
+  });
+}
+
+function deleteCat(catId) {
+  requireAuth(()=>{
+    const sec = DATA.find(s=>s.id===currentSecId);
+    const cat = sec.categories.find(c=>c.id===catId);
+    openConfirm(`刪除類別「${cat.name}」？`,
+      `此類別內含 ${cat.items.length} 個項目，刪除後無法復原。確定繼續嗎？`, ()=>{
+      sec.categories = sec.categories.filter(c=>c.id!==catId);
+      saveAndRefresh('類別已刪除');
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  EDIT MODAL
+// ═══════════════════════════════════════════════
+let _modalAction = null;
+
+function openEditModal({title, color, fields, onConfirm}) {
+  _modalAction = onConfirm;
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-confirm').style.background = color || '#3a7bd5';
+  document.documentElement.style.setProperty('--focus-color', color || '#3a7bd5');
+  let body = '';
+  fields.forEach(f=>{
+    body += `<label>${f.label}</label>`;
+    if(f.type==='input')    body += `<input id="${f.id}" type="text" value="${esc(f.value||'')}" placeholder="${esc(f.placeholder||'')}">`;
+    if(f.type==='textarea') body += `<textarea id="${f.id}" placeholder="${esc(f.placeholder||'')}">${esc(f.value||'')}</textarea>`;
+  });
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('edit-modal').classList.add('show');
+  setTimeout(()=>{ const el=document.querySelector('#modal-body input,#modal-body textarea'); if(el) el.focus(); }, 60);
+}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); _modalAction=null; }
+function modalConfirm()   { if(_modalAction && _modalAction()!==false) closeEditModal(); }
+
+// ═══════════════════════════════════════════════
+//  CONFIRM
+// ═══════════════════════════════════════════════
+let _confirmAction = null;
+function openConfirm(title, msg, onOk) {
+  _confirmAction = onOk;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent   = msg;
+  document.getElementById('confirm-modal').classList.add('show');
+}
+function closeConfirm() { document.getElementById('confirm-modal').classList.remove('show'); _confirmAction=null; }
+function confirmOk()    { if(_confirmAction) _confirmAction(); closeConfirm(); }
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+function saveAndRefresh(msg) {
+  saveData(); buildNav();
+  if(currentSecId) renderDetail(); else renderOverview();
+  showToast(msg); closeEditModal();
+}
+function currentColor() { const s=DATA.find(x=>x.id===currentSecId); return s?s.color:'#3a7bd5'; }
+function val(id) { const el=document.getElementById(id); return el?el.value:''; }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(el) el.classList.add('active'); }
+
+// ═══════════════════════════════════════════════
+//  MOBILE
+// ═══════════════════════════════════════════════
+function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); }
+function closeMenu()  { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+document.getElementById('overlay').addEventListener('click', closeMenu);
+
+// ═══════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') { closeLoginModal(); closeEditModal(); closeConfirm(); }
+  if(e.key==='Enter') {
+    if(document.getElementById('login-modal').classList.contains('show')) { doLogin(); return; }
+    if(document.getElementById('edit-modal').classList.contains('show') && document.activeElement.tagName!=='TEXTAREA') { modalConfirm(); }
   }
-  document.getElementById('submit-btn').disabled = false;
-  if (!editId) document.getElementById('submit-btn').textContent = '新增項目';
-}
+});
+// click outside modal to close
+['login-modal','edit-modal','confirm-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) { closeLoginModal(); closeEditModal(); closeConfirm(); } });
+});
 
-function startEdit(id) {
-  const d = items.find(x => String(x.id)===String(id)); if (!d) return;
-  editId = id;
-  document.getElementById('f-cat').value   = d.cat;
-  document.getElementById('f-sub').value   = d.sub;
-  document.getElementById('f-name').value  = d.name;
-  document.getElementById('f-freq').value  = d.freq;
-  document.getElementById('f-notes').value = d.notes||'';
-  document.getElementById('submit-btn').textContent = '儲存修改';
-  document.getElementById('form-title').textContent = `編輯：${d.name}`;
-  document.getElementById('cancel-btn').style.display = '';
-  window.scrollTo({ top:0, behavior:'smooth' });
-  document.getElementById('f-name').focus();
-}
-
-function cancelEdit() {
-  editId = null;
-  ['f-name','f-sub','f-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('submit-btn').textContent = '新增項目';
-  document.getElementById('form-title').textContent = '新增項目';
-  document.getElementById('cancel-btn').style.display = 'none';
-  document.getElementById('form-err').textContent = '';
-}
-
-async function confirmDelete(id) {
-  const d = items.find(x => String(x.id)===String(id)); if (!d) return;
-  if (!confirm(`確定刪除「${d.name}」？`)) return;
-  try {
-    await apiPost({ action:'deleteItem', id });
-    items = items.filter(x => String(x.id)!==String(id));
-    render();
-  } catch(e) { alert('刪除失敗，請再試一次'); }
-}
-
-// ── Accounts ──
-function addAccount() {
-  const u = document.getElementById('new-username').value.trim();
-  const p = document.getElementById('new-password').value.trim();
-  const errEl = document.getElementById('acct-err');
-  const msgEl = document.getElementById('acct-msg');
-  errEl.textContent=''; msgEl.textContent='';
-  if (!u||!p) { errEl.textContent='請填寫帳號與密碼'; return; }
-  if (u===SUPER.username) { errEl.textContent='此帳號名稱不可使用'; return; }
-  const users = loadUsers();
-  if (users.find(x=>x.username===u)) { errEl.textContent='此帳號已存在'; return; }
-  users.push({username:u,password:p});
-  saveUsers(users);
-  document.getElementById('new-username').value='';
-  document.getElementById('new-password').value='';
-  msgEl.textContent='✓ 帳號已建立'; setTimeout(()=>msgEl.textContent='',2000);
-  renderAccounts();
-}
-function deleteAccount(u) {
-  if (!confirm(`確定刪除帳號「${u}」？`)) return;
-  saveUsers(loadUsers().filter(x=>x.username!==u));
-  renderAccounts();
-}
-function renderAccounts() {
-  const users = loadUsers();
-  document.getElementById('account-list').innerHTML =
-    `<div class="panel-row"><div class="panel-row-name">${SUPER.username}</div><span class="badge-admin">主權限</span></div>` +
-    (users.length
-      ? users.map(u=>`<div class="panel-row"><div class="panel-row-name">${u.username}</div><span class="badge-user">一般</span><button class="act-btn" style="display:flex" onclick="deleteAccount('${u.username}')" title="刪除">🗑</button></div>`).join('')
-      : '<div style="padding:1rem;text-align:center;font-size:13px;color:var(--text-sec)">尚無其他帳號</div>');
-}
-
-// ── Init ──
-buildFilters();
-loadItems();
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+buildNav();
+setAuthUI();
+showOverview();
 </script>
 </body>
 </html>
