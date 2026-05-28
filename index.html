@@ -105,24 +105,43 @@
   .category-body.open { display:block; }
   .cat-head-actions { display:flex; gap:4px; margin-left:4px; }
 
-  /* ── PROJECT ITEM ── */
-  .project-item { padding:14px 16px 14px 30px; border-bottom:1px solid #f0f2f8; }
-  .project-item:last-child { border-bottom:none; }
-  .project-item-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  /* ── ITEMS GRID ── */
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  /* ── PROJECT ITEM (card) ── */
+  .project-item {
+    background: #f8f9fc;
+    border-radius: 10px;
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--accent);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: box-shadow .15s;
+  }
+  .project-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,.09); }
+  .project-item-header { display:flex; align-items:flex-start; gap:6px; }
   .project-name {
-    font-size:14px; font-weight:600; flex:1;
-    display:flex; align-items:center; gap:8px;
+    font-size:14px; font-weight:700; flex:1;
+    display:flex; align-items:flex-start; gap:7px; line-height:1.4;
   }
   .project-name::before {
-    content:''; display:inline-block; width:6px; height:6px;
+    content:''; display:inline-block; width:7px; height:7px; margin-top:4px;
     border-radius:50%; background:var(--accent); flex-shrink:0;
   }
   .project-note {
-    font-size:13px; color:#5a6378; line-height:1.7;
-    background:#f8f9fc; border-radius:6px; padding:8px 12px;
+    font-size:12.5px; color:#5a6378; line-height:1.7;
+    background:#fff; border-radius:6px; padding:8px 10px;
     border-left:3px solid var(--accent); white-space:pre-wrap;
+    flex:1;
   }
-  .note-label { font-size:11px; font-weight:600; color:var(--c-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+  .note-label { font-size:10px; font-weight:700; color:var(--c-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px; }
 
   /* ── ACTION BUTTONS ── */
   .btn-icon {
@@ -264,13 +283,16 @@
     #main { margin-left:0; }
     #content { padding:14px; }
     #topbar { padding:10px 14px; }
-    .project-item { padding-left:18px; }
+    .items-grid { padding:10px; gap:8px; }
     .overview-grid { grid-template-columns:1fr 1fr; gap:12px; }
     .ov-card { padding:16px; }
     .ov-card .ov-num { font-size:22px; }
     #topbar-count { display:none; }
     .auth-chip span.chip-label { display:none; }
   }
+  @media (max-width:1200px) { .items-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width:900px)  { .items-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width:600px)  { .items-grid { grid-template-columns: 1fr; } }
   @media (max-width:420px) { .overview-grid { grid-template-columns:1fr; } }
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:transparent; }
@@ -667,6 +689,7 @@ function renderDetail() {
         <div class="category-body open" id="${bodyId}">
     `;
 
+    html += `<div class="items-grid">`;
     cat.items.forEach(item=>{
       const itemBtns = auth ? `
         <button class="btn-icon btn-edit"   title="編輯"   onclick="editItem('${cat.id}','${item.id}')">✏️</button>
@@ -681,9 +704,10 @@ function renderDetail() {
           <div class="project-note">${esc(item.note)||'<span style="opacity:.4">（尚無備註）</span>'}</div>
         </div>`;
     });
+    html += `</div>`;
 
     const addItemBtn = auth ? `
-      <div style="padding:10px 12px">
+      <div style="padding:10px 16px 14px">
         <button class="btn-add" onclick="addItem('${cat.id}')">＋ 新增項目</button>
       </div>` : '';
     html += addItemBtn + `</div></div>`;
