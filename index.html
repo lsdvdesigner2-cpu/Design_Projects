@@ -119,29 +119,56 @@
     border-radius: 10px;
     border: 1px solid var(--c-border);
     border-left: 4px solid var(--accent);
-    padding: 14px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: box-shadow .15s;
+    gap: 0;
+    transition: box-shadow .15s, background .15s;
+    cursor: pointer;
   }
-  .project-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,.09); }
-  .project-item-header { display:flex; align-items:flex-start; gap:6px; }
+  .project-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,.1); background:#fff; }
+  .project-item-header { display:flex; align-items:center; gap:6px; }
   .project-name {
-    font-size:14px; font-weight:700; flex:1;
-    display:flex; align-items:flex-start; gap:7px; line-height:1.4;
+    font-size:13.5px; font-weight:700; flex:1;
+    display:flex; align-items:center; gap:7px; line-height:1.4;
   }
   .project-name::before {
-    content:''; display:inline-block; width:7px; height:7px; margin-top:4px;
+    content:''; display:inline-block; width:7px; height:7px;
     border-radius:50%; background:var(--accent); flex-shrink:0;
   }
-  .project-note {
-    font-size:12.5px; color:#5a6378; line-height:1.7;
-    background:#fff; border-radius:6px; padding:8px 10px;
-    border-left:3px solid var(--accent); white-space:pre-wrap;
-    flex:1;
+  /* note popup */
+  .note-popup-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(15,20,40,.45); z-index:250;
+    align-items:center; justify-content:center; padding:16px;
+    backdrop-filter:blur(2px);
   }
-  .note-label { font-size:10px; font-weight:700; color:var(--c-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px; }
+  .note-popup-overlay.show { display:flex; }
+  .note-popup {
+    background:#fff; border-radius:14px; padding:26px;
+    width:100%; max-width:480px; box-shadow:0 20px 50px rgba(0,0,0,.2);
+    animation:modalIn .2s ease;
+  }
+  .note-popup-title {
+    font-size:16px; font-weight:800; margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .note-popup-dot {
+    width:10px; height:10px; border-radius:50%; flex-shrink:0;
+  }
+  .note-popup-body {
+    font-size:13.5px; color:#5a6378; line-height:1.8;
+    background:#f8f9fc; border-radius:8px; padding:12px 14px;
+    white-space:pre-wrap; border-left:4px solid var(--popup-accent,#3a7bd5);
+  }
+  .note-popup-empty { font-size:13px; color:#aaa; font-style:italic; }
+  .note-popup-close {
+    margin-top:18px; width:100%;
+    background:#f0f2f8; color:var(--c-muted); border:none;
+    border-radius:8px; padding:9px; cursor:pointer; font-size:14px; font-weight:600;
+  }
+  .note-popup-close:hover { background:#e0e3ef; }
+  .project-note { display:none; }
 
   /* ── ACTION BUTTONS ── */
   .btn-icon {
@@ -384,6 +411,18 @@
 
 <!-- TOAST -->
 <div id="toast"></div>
+
+<!-- NOTE POPUP -->
+<div class="note-popup-overlay" id="note-popup-overlay" onclick="closeNotePopup(event)">
+  <div class="note-popup">
+    <div class="note-popup-title">
+      <span class="note-popup-dot" id="note-popup-dot"></span>
+      <span id="note-popup-title-text"></span>
+    </div>
+    <div class="note-popup-body" id="note-popup-body"></div>
+    <button class="note-popup-close" onclick="document.getElementById('note-popup-overlay').classList.remove('show')">關閉</button>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -675,13 +714,12 @@ function renderDetail() {
         <button class="btn-icon btn-edit"   title="編輯"   onclick="editItem('${cat.id}','${item.id}')">✏️</button>
         <button class="btn-icon btn-delete" title="刪除"   onclick="deleteItem('${cat.id}','${item.id}')">🗑️</button>` : '';
       html += `
-        <div class="project-item" style="--accent:${sec.color}" id="item-${item.id}">
+        <div class="project-item" style="--accent:${sec.color}" id="item-${item.id}"
+          onclick="showNotePopup(event,'${item.id.replace(/'/g,"\\'")}','${esc(item.name).replace(/`/g,"\\`")}','${sec.color}')">
           <div class="project-item-header">
             <div class="project-name">${esc(item.name)}</div>
             ${itemBtns}
           </div>
-          <div class="note-label">📝 備註說明</div>
-          <div class="project-note">${esc(item.note)||'<span style="opacity:.4">（尚無備註）</span>'}</div>
         </div>`;
     });
     html += `</div>`;
@@ -881,7 +919,7 @@ document.getElementById('overlay').addEventListener('click', closeMenu);
 //  KEYBOARD
 // ═══════════════════════════════════════════════
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape') { closeLoginModal(); closeEditModal(); closeConfirm(); }
+  if(e.key==='Escape') { closeLoginModal(); closeEditModal(); closeConfirm(); document.getElementById('note-popup-overlay').classList.remove('show'); }
   if(e.key==='Enter') {
     if(document.getElementById('login-modal').classList.contains('show')) { doLogin(); return; }
     if(document.getElementById('edit-modal').classList.contains('show') && document.activeElement.tagName!=='TEXTAREA') { modalConfirm(); }
@@ -891,6 +929,38 @@ document.addEventListener('keydown', e=>{
 ['login-modal','edit-modal','confirm-modal'].forEach(id=>{
   document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) { closeLoginModal(); closeEditModal(); closeConfirm(); } });
 });
+
+// ═══════════════════════════════════════════════
+//  NOTE POPUP
+// ═══════════════════════════════════════════════
+function showNotePopup(e, itemId, itemName, color) {
+  // don't open popup if clicking action buttons
+  if (e.target.closest('.btn-icon')) return;
+  // find item note from DATA
+  let note = '';
+  for (const sec of DATA) {
+    for (const cat of sec.categories) {
+      const item = cat.items.find(i=>i.id===itemId);
+      if (item) { note = item.note; break; }
+    }
+  }
+  document.getElementById('note-popup-dot').style.background = color;
+  document.documentElement.style.setProperty('--popup-accent', color);
+  document.getElementById('note-popup-title-text').textContent = itemName;
+  const body = document.getElementById('note-popup-body');
+  if (note && note.trim()) {
+    body.innerHTML = esc(note);
+    body.classList.remove('note-popup-empty');
+  } else {
+    body.innerHTML = '（尚無備註說明）';
+    body.classList.add('note-popup-empty');
+  }
+  document.getElementById('note-popup-overlay').classList.add('show');
+}
+function closeNotePopup(e) {
+  if (e.target === document.getElementById('note-popup-overlay'))
+    document.getElementById('note-popup-overlay').classList.remove('show');
+}
 
 // ═══════════════════════════════════════════════
 //  INIT
