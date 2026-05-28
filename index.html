@@ -605,27 +605,7 @@ function renderOverview() {
     `;
   });
   html += `</div>`;
-  html += `<div class="category-block">
-    <div class="category-head open" style="cursor:default">
-      <div class="cat-color" style="background:#8895a7"></div>
-      <div class="cat-name">所有項目索引</div>
-      <span class="cat-count">${total}</span>
-    </div>
-    <div class="category-body open">`;
-  DATA.forEach(sec=>{
-    sec.categories.forEach(cat=>{
-      cat.items.forEach(item=>{
-        html += `
-          <div class="project-item" style="--accent:${sec.color};display:flex;align-items:center;gap:10px;padding-left:18px">
-            <span style="font-size:15px">${sec.icon}</span>
-            <span style="font-size:13px;flex:1">${sec.label} › <b>${cat.name}</b> › ${esc(item.name)}</span>
-            <span style="font-size:11px;color:${sec.color};font-weight:700;cursor:pointer;flex-shrink:0"
-              onclick="showSection('${sec.id}')">查看 →</span>
-          </div>`;
-      });
-    });
-  });
-  html += `</div></div>`;
+
   page.innerHTML = html;
 }
 
