@@ -80,6 +80,23 @@
   }
   .btn-logout:hover { border-color:#e8613a; color:#e8613a; }
 
+  /* section pickers */
+  .icon-picker { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px; }
+  .icon-swatch {
+    width:38px; height:38px; border-radius:8px; border:2px solid var(--c-border);
+    background:#f8f9fc; cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center; transition:all .15s;
+  }
+  .icon-swatch:hover { border-color:#3a7bd5; background:#eef2ff; }
+  .icon-swatch.selected { border-color:#3a7bd5; background:#dbeafe; }
+  .color-picker { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+  .color-swatch {
+    width:36px; height:36px; border-radius:50%; border:3px solid transparent;
+    cursor:pointer; transition:all .15s;
+  }
+  .color-swatch:hover { transform:scale(1.12); }
+  .color-swatch.selected { border-color:#2d3436; box-shadow:0 0 0 2px #fff, 0 0 0 4px #2d3436; }
+
   /* ── CONTENT ── */
   #content { padding:28px; flex:1; }
   .section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
@@ -223,6 +240,28 @@
   .ov-card .ov-name { font-size:17px; font-weight:700; margin-bottom:4px; }
   .ov-card .ov-num  { font-size:28px; font-weight:800; }
   .ov-card .ov-sub  { font-size:12px; opacity:.8; margin-top:2px; }
+  .ov-card { position:relative; }
+  .ov-actions {
+    position:absolute; top:10px; right:10px;
+    display:flex; gap:5px;
+  }
+  .ov-btn-edit, .ov-btn-delete {
+    border:none; border-radius:6px; cursor:pointer;
+    width:28px; height:28px; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s;
+  }
+  .ov-btn-edit   { background:rgba(255,255,255,.25); color:#fff; }
+  .ov-btn-edit:hover   { background:rgba(255,255,255,.5); }
+  .ov-btn-delete { background:rgba(255,255,255,.15); color:#fff; }
+  .ov-btn-delete:hover { background:rgba(220,53,69,.7); }
+  .ov-add-card {
+    background: linear-gradient(135deg,#b2bec3,#636e72) !important;
+    border:2px dashed rgba(255,255,255,.4) !important;
+    opacity:.85;
+  }
+  .ov-add-card:hover { opacity:1; }
+  .ov-add-card .ov-icon { font-size:32px; }
 
   /* ── LOGIN MODAL ── */
   .modal-overlay {
@@ -621,30 +660,46 @@ function showOverview(el) {
 
 function renderOverview() {
   const page  = document.getElementById('overview-page');
+  const auth  = isLoggedIn();
   const total = DATA.reduce((s,sec)=>s+sec.categories.reduce((ss,c)=>ss+c.items.length,0),0);
+  const dirs  = DATA.length;
   let html = `
     <div class="section-header" style="margin-bottom:24px">
       <div class="section-icon" style="background:#f0f2f8;font-size:22px">📊</div>
       <div>
         <div class="section-title">設計部工作看板</div>
-        <div class="section-desc">共 ${total} 個工作項目・3 大業務方向</div>
+        <div class="section-desc">共 ${total} 個工作項目・${dirs} 大業務方向</div>
       </div>
     </div>
     <div class="overview-grid">
   `;
   DATA.forEach(sec=>{
     const count = sec.categories.reduce((s,c)=>s+c.items.length,0);
+    const secBtns = auth ? `
+      <div class="ov-actions" onclick="event.stopPropagation()">
+        <button class="ov-btn-edit"   onclick="editSection('${sec.id}')">✏️</button>
+        <button class="ov-btn-delete" onclick="deleteSection('${sec.id}')">🗑️</button>
+      </div>` : '';
     html += `
       <div class="ov-card" style="background:${sec.bg}" onclick="showSection('${sec.id}')">
+        ${secBtns}
         <div class="ov-icon">${sec.icon}</div>
-        <div class="ov-name">${sec.label}</div>
+        <div class="ov-name">${esc(sec.label)}</div>
         <div class="ov-num">${count}</div>
         <div class="ov-sub">${sec.categories.length} 個類別</div>
       </div>
     `;
   });
+  // Add new section card (auth only)
+  if (auth) {
+    html += `
+      <div class="ov-card ov-add-card" onclick="addSection()">
+        <div class="ov-icon">＋</div>
+        <div class="ov-name">新增業務方向</div>
+        <div class="ov-sub">建立新的大項目區塊</div>
+      </div>`;
+  }
   html += `</div>`;
-
   page.innerHTML = html;
 }
 
@@ -929,6 +984,106 @@ document.addEventListener('keydown', e=>{
 ['login-modal','edit-modal','confirm-modal'].forEach(id=>{
   document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) { closeLoginModal(); closeEditModal(); closeConfirm(); } });
 });
+
+// ═══════════════════════════════════════════════
+//  SECTION (大項目) CRUD
+// ═══════════════════════════════════════════════
+const SECTION_COLORS = [
+  { label:'橘紅', color:'#e8613a', bg:'linear-gradient(135deg,#e8613a,#f0a06a)' },
+  { label:'藍色', color:'#3a7bd5', bg:'linear-gradient(135deg,#3a7bd5,#6fa3ef)' },
+  { label:'紫色', color:'#6c5ce7', bg:'linear-gradient(135deg,#6c5ce7,#a29bfe)' },
+  { label:'綠色', color:'#00b894', bg:'linear-gradient(135deg,#00b894,#55efc4)' },
+  { label:'粉紅', color:'#e84393', bg:'linear-gradient(135deg,#e84393,#fd79a8)' },
+  { label:'深藍', color:'#0984e3', bg:'linear-gradient(135deg,#0984e3,#74b9ff)' },
+  { label:'咖啡', color:'#6d4c41', bg:'linear-gradient(135deg,#6d4c41,#a1887f)' },
+  { label:'青色', color:'#00cec9', bg:'linear-gradient(135deg,#00cec9,#81ecec)' },
+];
+const SECTION_ICONS = ['🛒','🏢','🚀','🎯','💡','📦','🎨','📱','🌐','💼','📊','🔧'];
+
+function addSection() {
+  requireAuth(()=>{
+    openSectionModal({ title:'➕ 新增業務方向', sec:null });
+  });
+}
+
+function editSection(secId) {
+  requireAuth(()=>{
+    const sec = DATA.find(s=>s.id===secId);
+    openSectionModal({ title:'✏️ 編輯業務方向', sec });
+  });
+}
+
+function deleteSection(secId) {
+  requireAuth(()=>{
+    const sec = DATA.find(s=>s.id===secId);
+    const total = sec.categories.reduce((s,c)=>s+c.items.length,0);
+    openConfirm(
+      `刪除「${sec.label}」？`,
+      `此區塊含 ${sec.categories.length} 個類別、${total} 個項目，刪除後無法復原。確定繼續嗎？`,
+      ()=>{
+        DATA = DATA.filter(s=>s.id!==secId);
+        saveAndRefreshOverview('區塊已刪除');
+      }
+    );
+  });
+}
+
+function openSectionModal({ title, sec }) {
+  // Build modal HTML inline
+  const selColor  = sec ? SECTION_COLORS.findIndex(c=>c.color===sec.color) : 0;
+  const selIcon   = sec ? SECTION_ICONS.indexOf(sec.icon) : 0;
+  const curLabel  = sec ? sec.label : '';
+
+  let colorBtns = SECTION_COLORS.map((c,i)=>`
+    <button type="button" class="color-swatch ${i===selColor?'selected':''}"
+      style="background:${c.bg}" data-ci="${i}" onclick="selectSectionColor(${i})"
+      title="${c.label}"></button>`).join('');
+
+  let iconBtns = SECTION_ICONS.map((ic,i)=>`
+    <button type="button" class="icon-swatch ${i===selIcon?'selected':''}"
+      data-ii="${i}" onclick="selectSectionIcon(${i})">${ic}</button>`).join('');
+
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-confirm').style.background = sec ? sec.color : SECTION_COLORS[0].color;
+  document.getElementById('modal-body').innerHTML = `
+    <label>名稱</label>
+    <input id="sec-name" type="text" value="${esc(curLabel)}" placeholder="例：行銷部">
+    <label>圖示</label>
+    <div class="icon-picker">${iconBtns}</div>
+    <label style="margin-top:12px">顏色</label>
+    <div class="color-picker">${colorBtns}</div>
+  `;
+  _modalAction = function() {
+    const name = document.getElementById('sec-name').value.trim();
+    if (!name) { showToast('請輸入名稱'); return false; }
+    const ci = +document.querySelector('.color-swatch.selected')?.dataset.ci || 0;
+    const ii = +document.querySelector('.icon-swatch.selected')?.dataset.ii || 0;
+    const chosen = SECTION_COLORS[ci];
+    const icon   = SECTION_ICONS[ii];
+    if (sec) {
+      sec.label = name; sec.color = chosen.color; sec.bg = chosen.bg; sec.icon = icon;
+    } else {
+      DATA.push({ id:uid(), label:name, icon, color:chosen.color, bg:chosen.bg, categories:[] });
+    }
+    saveAndRefreshOverview(sec ? '已更新 ✓' : '區塊已新增 ✓');
+  };
+  document.getElementById('edit-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('sec-name').focus(), 60);
+}
+
+function selectSectionColor(i) {
+  document.querySelectorAll('.color-swatch').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.color-swatch')[i].classList.add('selected');
+  document.getElementById('modal-confirm').style.background = SECTION_COLORS[i].color;
+}
+function selectSectionIcon(i) {
+  document.querySelectorAll('.icon-swatch').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.icon-swatch')[i].classList.add('selected');
+}
+
+function saveAndRefreshOverview(msg) {
+  saveData(); buildNav(); renderOverview(); showToast(msg); closeEditModal();
+}
 
 // ═══════════════════════════════════════════════
 //  NOTE POPUP
