@@ -980,10 +980,8 @@ document.addEventListener('keydown', e=>{
     if(document.getElementById('edit-modal').classList.contains('show') && document.activeElement.tagName!=='TEXTAREA') { modalConfirm(); }
   }
 });
-// click outside modal to close
-['login-modal','edit-modal','confirm-modal'].forEach(id=>{
-  document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) { closeLoginModal(); closeEditModal(); closeConfirm(); } });
-});
+// click outside modal to close (login only; edit/confirm require explicit button)
+document.getElementById('login-modal').addEventListener('click', e=>{ if(e.target.id==='login-modal') closeLoginModal(); });
 
 // ═══════════════════════════════════════════════
 //  SECTION (大項目) CRUD
