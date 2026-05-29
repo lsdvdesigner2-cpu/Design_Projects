@@ -476,6 +476,23 @@
   </div>
 </div>
 
+<!-- Firebase SDK (載入順序必須在主程式之前) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCZNV-I0lueWczWgCO5ZcxrqChbG8ejK1U",
+  authDomain: "design-board-5f597.firebaseapp.com",
+  projectId: "design-board-5f597",
+  storageBucket: "design-board-5f597.firebasestorage.app",
+  messagingSenderId: "877515810335",
+  appId: "1:877515810335:web:dfda3b05eb5c2ccfa3172a"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const DOC_REF = db.collection('board').doc('main');
+</script>
+
 <script>
 // ═══════════════════════════════════════════════
 //  AUTH CONFIG  (password stored as SHA-256)
@@ -1203,25 +1220,6 @@ async function doMigration() {
   setAuthUI();
   showOverview();
 })();
-</script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-<script>
-// ── Firebase 設定 ──
-const firebaseConfig = {
-  apiKey: "AIzaSyCZNV-I0lueWczWgCO5ZcxrqChbG8ejK1U",
-  authDomain: "design-board-5f597.firebaseapp.com",
-  projectId: "design-board-5f597",
-  storageBucket: "design-board-5f597.firebasestorage.app",
-  messagingSenderId: "877515810335",
-  appId: "1:877515810335:web:dfda3b05eb5c2ccfa3172a"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const DOC_REF = db.collection('board').doc('main');
 </script>
 </body>
 </html>
