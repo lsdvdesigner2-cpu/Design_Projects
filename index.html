@@ -451,6 +451,19 @@
 <!-- TOAST -->
 <div id="toast"></div>
 
+<!-- 資料搬移提示 -->
+<div id="migration-banner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1e2235;color:#fff;padding:16px 24px;border-radius:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:600;
+  display:none;align-items:center;gap:16px;font-size:14px;max-width:90vw;">
+  <span>📦 偵測到舊版資料（共 <span id="migration-count"></span> 個項目），是否上傳至雲端？</span>
+  <button onclick="doMigration()" style="background:#00b894;color:#fff;border:none;border-radius:8px;
+    padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap">立即上傳</button>
+  <button onclick="document.getElementById('migration-banner').style.display='none'"
+    style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;
+    padding:8px 12px;cursor:pointer;font-size:13px">略過</button>
+</div>
+
 <!-- NOTE POPUP -->
 <div class="note-popup-overlay" id="note-popup-overlay" onclick="closeNotePopup(event)">
   <div class="note-popup">
@@ -505,6 +518,7 @@ async function doLogin() {
     setAuthUI();
     if (currentSecId) renderDetail(); else renderOverview();
     showToast('✅ 登入成功，歡迎 ' + AUTH.username);
+    if (_needsMigration) showMigrationBanner();
   } else {
     errEl.textContent = '帳號或密碼錯誤，請再試一次';
     document.getElementById('login-pass').value = '';
@@ -597,13 +611,43 @@ const DEFAULT_DATA = [
 // ═══════════════════════════════════════════════
 //  DATA PERSISTENCE
 // ═══════════════════════════════════════════════
-const STORAGE_KEY = 'design_board_v2';
-let DATA = loadData();
-function loadData() {
-  try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DATA)); }
-  catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+let _needsMigration = false;
+
+async function loadData() {
+  try {
+    const snap = await DOC_REF.get();
+    if (snap.exists && snap.data().sections && snap.data().sections.length > 0) {
+      DATA = snap.data().sections;
+      return;
+    }
+  } catch(e) { console.warn('Firestore read error', e); }
+
+  // Firestore 是空的 → 嘗試從 localStorage 搬移舊資料
+  try {
+    const local = localStorage.getItem('design_board_v2');
+    if (local) {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        DATA = parsed;
+        _needsMigration = true;
+        return;
+      }
+    }
+  } catch(e) {}
+
+  DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+
+async function saveData() {
+  try {
+    await DOC_REF.set({ sections: DATA });
+  } catch(e) {
+    showToast('⚠️ 儲存失敗，請確認 Firestore 連線');
+    console.error(e);
+  }
+}
 function uid() { return 'id-' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
 
 // ═══════════════════════════════════════════════
@@ -953,8 +997,8 @@ function showToast(msg) {
 // ═══════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════
-function saveAndRefresh(msg) {
-  saveData(); buildNav();
+async function saveAndRefresh(msg) {
+  await saveData(); buildNav();
   if(currentSecId) renderDetail(); else renderOverview();
   showToast(msg); closeEditModal();
 }
@@ -1092,8 +1136,8 @@ function selectSectionIcon(i) {
   document.querySelectorAll('.icon-swatch')[i].classList.add('selected');
 }
 
-function saveAndRefreshOverview(msg) {
-  saveData(); buildNav(); renderOverview(); showToast(msg); closeEditModal();
+async function saveAndRefreshOverview(msg) {
+  await saveData(); buildNav(); renderOverview(); showToast(msg); closeEditModal();
 }
 
 // ═══════════════════════════════════════════════
@@ -1129,11 +1173,55 @@ function closeNotePopup(e) {
 }
 
 // ═══════════════════════════════════════════════
+//  MIGRATION
+// ═══════════════════════════════════════════════
+function showMigrationBanner() {
+  const total = DATA.reduce((s,sec)=>s+sec.categories.reduce((ss,c)=>ss+c.items.length,0),0);
+  document.getElementById('migration-count').textContent = total;
+  const banner = document.getElementById('migration-banner');
+  banner.style.display = 'flex';
+}
+
+async function doMigration() {
+  document.getElementById('migration-banner').style.display = 'none';
+  showToast('⏳ 上傳資料中…');
+  await saveData();
+  _needsMigration = false;
+  localStorage.removeItem('design_board_v2');
+  showToast('✅ 資料已上傳至雲端，所有人現在都能看到最新內容！');
+}
+
+// ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
-buildNav();
-setAuthUI();
-showOverview();
+(async () => {
+  // Show loading state
+  document.getElementById('overview-page').innerHTML =
+    '<div style="text-align:center;padding:60px;color:var(--c-muted);font-size:15px">⏳ 載入資料中…</div>';
+  await loadData();
+  buildNav();
+  setAuthUI();
+  showOverview();
+})();
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+// ── Firebase 設定 ──
+const firebaseConfig = {
+  apiKey: "AIzaSyCZNV-I0lueWczWgCO5ZcxrqChbG8ejK1U",
+  authDomain: "design-board-5f597.firebaseapp.com",
+  projectId: "design-board-5f597",
+  storageBucket: "design-board-5f597.firebasestorage.app",
+  messagingSenderId: "877515810335",
+  appId: "1:877515810335:web:dfda3b05eb5c2ccfa3172a"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const DOC_REF = db.collection('board').doc('main');
 </script>
 </body>
 </html>
